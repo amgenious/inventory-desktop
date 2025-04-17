@@ -1,0 +1,15 @@
+appId: com.example.nextron
+productName: Inventory Management System
+copyright: Copyright © 2025 Henry Tweneboah
+directories:
+  output: dist
+  buildResources: resources
+files:
+  - from: .
+    filter:
+      - package.json
+      - app
+win:
+   icon: resources/icon.ico
+   signingHashAlgorithms: []
+publish: null
