@@ -11,6 +11,7 @@ import UserPage from '../users/userpage'
 import MeasurementPage from '../measurement/measurement'
 import SupplierPage from '../supplier/supplier'
 import CustomerPage from '../customer/customer'
+import StockPage from '../stock/stock'
 
 const StaticDataContent = () => {
   return (
@@ -37,7 +38,7 @@ const StaticDataContent = () => {
        <UserPage />
       </TabsContent>
       <TabsContent value="stock">
-        {/* <InventoryPage /> */} <p>Stock</p>
+        <StockPage />
       </TabsContent>
       <TabsContent value="supplier">
         <SupplierPage />
