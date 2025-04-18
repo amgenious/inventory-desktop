@@ -37,7 +37,7 @@ import { DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescript
 import { Label } from "../ui/label"
 import { Textarea } from "../ui/textarea"
 import { toast } from "sonner"
-// import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/hooks/use-auth"
 
 export type Category = {
   _id: string
@@ -263,7 +263,7 @@ function TableCellViewer({ item }: {item:any }) {
       let name = newcategory ||  item.name
       let description = newdescription ||  item.description
       try{
-        const response = await fetch (`/api/category/${item._id}`,{
+        const response = await fetch (`http://localhost:8000/api/v1/category/update/${item.id}`,{
           method:"PUT",
           headers:{
             "Content-Type":"application/json",
@@ -336,7 +336,7 @@ function TableCellViewer({ item }: {item:any }) {
 }
 
 function DeleteButton ({item}: {item:any}) {
-  // const { user } = useAuth()
+  const { user } = useAuth()
   return(
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -345,14 +345,11 @@ function DeleteButton ({item}: {item:any}) {
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
-          {/* {
+          {
              user?.role === 'admin' &&  <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item._id)}><Trash className="text-red-500" /> Delete</DropdownMenuItem>
-              </DropdownMenuContent>
-            } */}
-          <DropdownMenuContent align="end">
               <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
               </DropdownMenuContent>
+            }
       </DropdownMenu>
   )
 

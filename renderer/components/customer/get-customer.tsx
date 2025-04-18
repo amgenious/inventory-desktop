@@ -16,7 +16,6 @@ import {
 import { ArrowUpDown, ChevronDown, Loader2, MoreHorizontal, RefreshCcw, Trash } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -38,7 +37,7 @@ import { DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescript
 import { Label } from "../ui/label"
 import { Badge } from "../ui/badge"
 import { toast } from "sonner"
-// import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/hooks/use-auth"
 
 export type Customer = {
   _id: string
@@ -50,7 +49,7 @@ export type Customer = {
 
 const handleDelete = async(id:any)=> {
   try{
-    const response = await fetch(`/api/customer/${id}`, {
+    const response = await fetch(`http://localhost:8000/api/v1/customer/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -71,28 +70,6 @@ const handleDelete = async(id:any)=> {
 }
 
 export const columns: ColumnDef<Customer>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        // checked={
-        //   table.getIsAllPageRowsSelected() ||
-        //   (table.getIsSomePageRowsSelected() && "indeterminate")
-        // }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -116,7 +93,7 @@ export const columns: ColumnDef<Customer>[] = [
     cell: ({ row }) => {
 
       return <div className="font-medium">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("email")}
         </Badge>
         </div>
@@ -128,7 +105,7 @@ export const columns: ColumnDef<Customer>[] = [
       cell: ({ row }) => {
   
         return <div className="font-medium">
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Badge variant="outline" className="text-muted px-1.5">
           {row.getValue("contact")}
           </Badge>
           </div>
@@ -140,7 +117,7 @@ export const columns: ColumnDef<Customer>[] = [
         cell: ({ row }) => {
     
           return <div className="font-medium">
-            <Badge variant="outline" className="text-muted-foreground px-1.5">
+            <Badge variant="outline" className="text-muted px-1.5">
             {row.getValue("address")}
             </Badge>
             </div>
@@ -163,9 +140,9 @@ const Getcustomer = () => {
         
               const fetchCustomer = async () => {
                 setLoading(true)
-                const response = await fetch("/api/customer")
+                const response = await fetch("http://localhost:8000/api/v1/customer")
                 const data = await response.json()
-                setCustomer(data.customers)
+                setCustomer(data.customer)
                 setLoading(false)
               }
              const [sorting, setSorting] = React.useState<SortingState>([])
@@ -206,7 +183,7 @@ const Getcustomer = () => {
                        onChange={(event) =>
                          table.getColumn("name")?.setFilterValue(event.target.value)
                        }
-                       className="max-w-sm"
+                       className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black"
                      />
                      <div className="w-full flex justify-end mr-5">
         <Button disabled={loading} onClick={fetchCustomer}>
@@ -246,7 +223,7 @@ const Getcustomer = () => {
                        </DropdownMenuContent>
                      </DropdownMenu>
                    </div>
-                   <div className="rounded-md border">
+                   <div className="rounded-sm bg-white">
                     {
                       loading ? (
                         <Loader2  className="h-4 animate-spin w-full text-center"/>
@@ -257,7 +234,7 @@ const Getcustomer = () => {
                            <TableRow key={headerGroup.id}>
                              {headerGroup.headers.map((header) => {
                                return (
-                                 <TableHead key={header.id}>
+                                 <TableHead key={header.id} className="text-secondary">
                                    {header.isPlaceholder
                                      ? null
                                      : flexRender(
@@ -278,7 +255,7 @@ const Getcustomer = () => {
                                data-state={row.getIsSelected() && "selected"}
                              >
                                {row.getVisibleCells().map((cell) => (
-                                 <TableCell key={cell.id}>
+                                 <TableCell key={cell.id} className="text-secondary">
                                    {flexRender(
                                      cell.column.columnDef.cell,
                                      cell.getContext()
@@ -291,7 +268,7 @@ const Getcustomer = () => {
                            <TableRow>
                              <TableCell
                                colSpan={columns.length}
-                               className="h-24 text-center"
+                               className="h-24 text-center text-secondary"
                              >
                                No results.
                              </TableCell>
@@ -301,12 +278,6 @@ const Getcustomer = () => {
                      </Table>
                       )
                     }
-                   </div>
-                   <div className="flex items-center justify-end space-x-2 py-4">
-                     <div className="flex-1 text-sm text-muted-foreground">
-                       {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                       {table.getFilteredRowModel().rows.length} row(s) selected.
-                     </div>
                    </div>
                  </div>
   )
@@ -327,7 +298,7 @@ function TableCellViewer({ item }: {item:any }) {
         let contact = newcontact ||  item.contact
         let address = newaddress ||  item.address
         try{
-          const response = await fetch (`/api/customer/${item._id}`,{
+          const response = await fetch (`http://localhost:8000/api/v1/customer/update/${item.id}`,{
             method:"PUT",
             headers:{
               "Content-Type":"application/json",
@@ -353,7 +324,7 @@ function TableCellViewer({ item }: {item:any }) {
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-foreground w-fit cursor-pointer">
+        <Button variant="link" className="text-secondary w-fit cursor-pointer">
           {item.name}
         </Button>
       </DrawerTrigger>
@@ -403,7 +374,7 @@ function TableCellViewer({ item }: {item:any }) {
   )
 }
 function DeleteButton ({item}: {item:any}) {
-// const { user } = useAuth()
+const { user } = useAuth()
   return(
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -412,11 +383,11 @@ function DeleteButton ({item}: {item:any}) {
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
-          {/* {
+          {
             user?.role === 'admin' &&  <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item._id)}><Trash className="text-red-500" /> Delete</DropdownMenuItem>
+            <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
           </DropdownMenuContent>
-          } */}
+          }
       </DropdownMenu>
   )
 

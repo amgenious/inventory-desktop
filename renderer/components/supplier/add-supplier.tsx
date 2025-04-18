@@ -16,24 +16,23 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const Addcustomer = () => {
+const Addsupplier = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const customerSchema = z.object({
-    name: z.string().min(1, "Customer name cannot be empty"),
-    email: z.string().email("Customer email cannot be empty"),
-    contact: z.string().min(1, "Customer contact cannot be empty"),
-    address: z.string().min(1, "Customer address cannot be empty"),
+  const supplierSchema = z.object({
+    name: z.string().min(1, "Supplier name cannot be empty"),
+    email: z.string().email("Supplier email cannot be empty"),
+    contact: z.string().min(1, "Supplier contact cannot be empty"),
+    address: z.string().min(1, "Supplier address cannot be empty"),
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit() {
     setIsSubmitting(true);
-    const result = customerSchema.safeParse({ name: name,email:email,contact:contact,address:address });
+    const result = supplierSchema.safeParse({ name: name,email:email,contact:contact,address:address });
 
     if (!result.success) {
       setError(result.error.format().name?._errors[0] || result.error.format().email?._errors[0] || result.error.format().contact?._errors[0] || result.error.format().address?._errors[0] || "Invalid input");
@@ -41,7 +40,7 @@ const Addcustomer = () => {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8000/api/v1/customer/add-customer", {
+      const response = await fetch("http://localhost:8000/api/v1/supplier/add-supplier", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,12 +50,12 @@ const Addcustomer = () => {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to create new customer");
+        throw new Error(error.message || "Failed to create new supplier");
       }
 
-      toast.success("Success! New customer has been created.");
+      toast.success("Success! New supplier has been created.");
     } catch (error) {
-      toast.error(`Failed to create new customer, Error: ${error}`);
+      toast.error(`Failed to create new supplier, Error: ${error}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -65,19 +64,19 @@ const Addcustomer = () => {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="default">
-          <PlusCircle className="w-6 mr-2" /> Add Customer
+          <PlusCircle className="w-6 mr-2"/> Add Supplier
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Customer</DialogTitle>
+          <DialogTitle>Add Supplier</DialogTitle>
           <DialogDescription>
-            Add New Customer here. Click save when you're done.
+            Add New Supplier here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           <div className="flex items-center gap-4">
-            <Label htmlFor="name">Customer Name</Label>
+            <Label htmlFor="name">Supplier Name</Label>
             <Input
               id="name"
               placeholder="Name"
@@ -125,7 +124,7 @@ const Addcustomer = () => {
                 Adding...
               </>
             ) : (
-              "Add Customer"
+              "Add Supplier"
             )}
           </Button>
         </DialogFooter>
@@ -134,4 +133,4 @@ const Addcustomer = () => {
   );
 };
 
-export default Addcustomer;
+export default Addsupplier;

@@ -39,7 +39,7 @@ import {
 } from "../ui/drawer"
 import { Label } from "../ui/label"
 import { toast } from "sonner"
-// import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/hooks/use-auth"
 
 export type Location = {
   _id: string
@@ -231,7 +231,7 @@ function TableCellViewer({ item }: { item: any }) {
     setIsUpdating(true)
     let name = newname ||  item.name
     try{
-      const response = await fetch (`/api/locations/${item._id}`,{
+      const response = await fetch (`http://localhost:8000/api/v1/location/update/${item.id}`,{
         method:"PUT",
         headers:{
           "Content-Type":"application/json",
@@ -296,7 +296,7 @@ function TableCellViewer({ item }: { item: any }) {
 }
 
 function DeleteButton ({item}: {item:any}) {
-  // const { user } = useAuth()
+  const { user } = useAuth()
   return(
     <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -305,16 +305,11 @@ function DeleteButton ({item}: {item:any}) {
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
-          {/* {
+          {
             user?.role === 'admin' &&  <DropdownMenuContent align="end">
-            <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item._id)}><Trash className="text-red-500" /> Delete</DropdownMenuItem>
+            <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
           </DropdownMenuContent>
-          } */}
-             <DropdownMenuContent align="end">
-              <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-            
-         
+          }  
       </DropdownMenu>
   )
 }

@@ -14,12 +14,12 @@ export default function HomePage() {
                 <link rel="icon" type="image/svg+xml" href="/images/logo.png" />
             </Head>
 
-            <div className="relative flex min-h-screen flex-col">
+            <div className="relative flex min-h-screen flex-col bg-gradient-to-r from-violet-200 to-blue-200">
                 <div className="w-full h-screen flex flex-col items-center justify-center px-4">
                     <div className="flex-1 flex flex-col justify-center items-center w-full space-y-8">
                         <div className=" flex flex-col justify-center items-center gap-5">
                             <Image src={'/images/logo.png'} alt="logo" width={200} height={200}/>
-                           <h1 className="text-3xl font-bold">Welcome to Inventory Management System</h1>
+                           <h1 className="text-3xl font-bold text-secondary">Welcome to Inventory Management System</h1>
                         </div>
                         <div className="w-full flex-wrap flex justify-center gap-5">
                             {

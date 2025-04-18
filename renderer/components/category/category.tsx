@@ -1,4 +1,3 @@
-import Layout from '@/pages/dashboard/layout'
 import React from 'react'
 import { AddCategory } from './add-category'
 import { Getallcategory } from './getallcategory'

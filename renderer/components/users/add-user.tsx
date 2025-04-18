@@ -11,24 +11,36 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Plus, PlusCircle } from "lucide-react"
+import { Loader2, PlusCircle } from "lucide-react"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import {z} from "zod"
 
 const Adduser = () => {
   const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [pass, setPassword] = useState("")
     const [role, setRole] = useState("")
+    const [error, setError] = useState("");
 
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const router = useRouter()
+    const userSchema = z.object({
+      name: z.string().min(1, "User name cannot be empty"),
+      email: z.string().email( "User email cannot be empty"),
+      pass: z.string().min(5, "User password cannot be empty"),
+      role: z.string().min(1, "User role cannot be empty"),
+    });    
 
     async function onSubmit() {
       setIsSubmitting(true)
+      const result = userSchema.safeParse({ name: name,email:email, pass:pass,role:role });
 
+      if (!result.success) {
+        setError(result.error.format().name?._errors[0] || result.error.format().email?._errors[0] ||  result.error.format().pass?._errors[0] ||  result.error.format().role?._errors[0] || "Invalid input");
+        setIsSubmitting(false)
+        return;
+      }
       try {
         const response = await fetch("http://localhost:8000/api/v1/user/add-user", {
           method: "POST",
@@ -46,7 +58,6 @@ const Adduser = () => {
         toast.success(
            "Success! New user has been created.",
         )
-        router.refresh()
       } catch (error) {
         toast.error(
            `Failed to create new user, Error: ${error}`
@@ -67,7 +78,7 @@ const Adduser = () => {
             Add New User here. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="flex flex-col gap-4 py-4">
           <div className="flex items-center gap-4">
             <Label htmlFor="name">
               User Name
@@ -98,6 +109,7 @@ const Adduser = () => {
                   </SelectContent>
                 </Select>
               </div>
+              {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
             </div>
         <DialogFooter>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit} className="cursor-pointer">

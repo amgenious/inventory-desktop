@@ -8,6 +8,9 @@ TabsTrigger,
 import CategoryPage from '../category/category'
 import LocationPage from '../location/location'
 import UserPage from '../users/userpage'
+import MeasurementPage from '../measurement/measurement'
+import SupplierPage from '../supplier/supplier'
+import CustomerPage from '../customer/customer'
 
 const StaticDataContent = () => {
   return (
@@ -28,7 +31,7 @@ const StaticDataContent = () => {
         <CategoryPage />
       </TabsContent>
       <TabsContent value="measurement">
-        {/* <MeasurementPage /> */} <p>Measurement</p>
+        <MeasurementPage /> 
       </TabsContent>
       <TabsContent value="user">
        <UserPage />
@@ -37,10 +40,10 @@ const StaticDataContent = () => {
         {/* <InventoryPage /> */} <p>Stock</p>
       </TabsContent>
       <TabsContent value="supplier">
-        {/* <SupplierPage /> */} <p>Supplier</p>
+        <SupplierPage />
       </TabsContent>
       <TabsContent value="customer">
-        {/* <CustomerPage /> */} <p>Customer</p>
+        <CustomerPage />
       </TabsContent>
     </Tabs>
   )
