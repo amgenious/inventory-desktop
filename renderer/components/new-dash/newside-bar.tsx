@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { FolderArchive, GalleryVerticalEnd, Settings2, Ticket } from 'lucide-react'
+import { FolderArchive, GalleryVerticalEnd, SearchCheckIcon, Settings2, Ticket } from 'lucide-react'
 import { SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarContent, SidebarFooter } from '../ui/sidebar'
 import { IconDashboard, IconListDetails, IconChartBar, IconFolder, IconUsers, IconDatabase, IconReport, IconFileWord, IconLogout } from '@tabler/icons-react'
 import { NavMain } from '../dashboard/nav-main'
@@ -60,6 +60,11 @@ const data = {
     },
   ],
   secondary:[
+    {
+      title:"Enquiries",
+      url:"/dashboard/enquiries/",
+      icon:SearchCheckIcon,
+    },
     {
       title:"Settings",
       url:"/dashboard/settings/",
