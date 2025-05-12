@@ -205,7 +205,7 @@ const Getallissues = () => {
 
   const fetchIssue = async () => {
     setLoading(true)
-    const response = await fetch("/api/issues")
+    const response = await fetch("http://localhost:8000/api/v1/issue/")
     const data = await response.json()
     setIssue(data.issues)
     setLoading(false)
@@ -234,9 +234,9 @@ const Getallissues = () => {
               rowSelection,
             },
           })
-    // React.useEffect(() => {
-    //      fetchIssue()
-    // }, [])
+    React.useEffect(() => {
+         fetchIssue()
+    }, [])
   return (
      <div className="w-full">
              <div className="flex items-center py-4">

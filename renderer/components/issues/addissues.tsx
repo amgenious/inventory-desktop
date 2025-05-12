@@ -57,14 +57,14 @@ const Addissues = () => {
 
     setIsSubmitting(true)
     try {
-      const response = await fetch("/api/issues", {
+      const response = await fetch("http://localhost:8000/api/v1/issues", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({referencenumber,valuedate,transtype,transcode,customer,remarks,itemname,partnumber,location,quantity}),
       })
-       await fetch(`/api/stock/${itemid}`, {
+       await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${itemid}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -92,13 +92,13 @@ const Addissues = () => {
  
 const fetchItems = async()=>{
   setFetching(true)
-  const response = await fetch("/api/stock/")
+  const response = await fetch("http://localhost:8000/api/v1/stock/")
   const data = await response.json()
-  setItems(data.stocks)
+  setItems(data.stock)
 
-  const response1 = await fetch("/api/customer/")
+  const response1 = await fetch("http://localhost:8000/api/v1/customer/")
   const data1 = await response1.json()
-  setFetchedCustomer(data1.customers)
+  setFetchedCustomer(data1.customer)
 
   setFetching(false)
 }
