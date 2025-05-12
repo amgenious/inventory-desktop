@@ -28,17 +28,12 @@ const data = {
     },
     {
       title: "Error Corrections",
-      url: "/dashboard/corrects/",
+      url: "/dashboard/errorcorrection/",
       icon: IconFolder,
     },
     {
       title: "Open Balances",
-      url: "/dashboard/balances/",
-      icon: IconUsers,
-    },
-    {
-      title: "Opened Stock",
-      url: "/dashboard/balances/",
+      url: "/dashboard/openbalances/",
       icon: IconUsers,
     },
   ],
