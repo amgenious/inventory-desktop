@@ -27,7 +27,6 @@ const TransactionPage = () => {
       <ReceiptPage />
     </TabsContent>
   </Tabs>
-
     </Layout>
   )
 }
