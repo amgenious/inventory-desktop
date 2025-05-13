@@ -16,7 +16,7 @@ const BalancesPage = () => {
   const [location, setLocation] = useState('')
   const [partnumber, setPartnumber] = useState('')
   const [fetchedItems, setItems] = useState<any>([])
-  const [prestoreddata, setPreStoredData] = useState<any>([])
+  const [storeddata, setPreStoredData] = useState<any>([])
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -32,6 +32,13 @@ const BalancesPage = () => {
     const response = await fetch("http://localhost:8000/api/v1/stock/")
     const data = await response.json()
     setItems(data.stock)
+    setFetching(false)
+  }
+  const fetchOpenedItems = async () => {
+    setFetching(true)
+    const response = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance/")
+    const data = await response.json()
+    setPreStoredData(data.openbalance)
     setFetching(false)
   }
   const addPreStoredData = async()=>{
@@ -96,6 +103,7 @@ const BalancesPage = () => {
   };
   useEffect(() => {
     fetchItems()
+    fetchOpenedItems()
   }, [])
   return (
     <div className='px-4 lg:px-6'>
@@ -153,21 +161,21 @@ const BalancesPage = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className='text-secondary'>Stock</TableHead>
-              <TableHead className='text-secondary'>Part Number</TableHead>
-              <TableHead className='text-secondary'>Location</TableHead>
-              <TableHead className='text-secondary'>Quantity</TableHead>
+              <TableHead className='text-secondary font-bold'>Stock</TableHead>
+              <TableHead className='text-secondary font-bold'>Part Number</TableHead>
+              <TableHead className='text-secondary font-bold'>Location</TableHead>
+              <TableHead className='text-secondary font-bold'>Quantity</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {
-              prestoreddata.length ? (
-                prestoreddata.map((item:any)=>(
+              storeddata.length ? (
+                storeddata.map((item:any)=>(
                   <TableRow key={item.id}>
-                    <TableCell className='text-secondary'>{item.itemname}</TableCell>
+                    <TableCell className='text-secondary'>{item.name}</TableCell>
                     <TableCell className='text-secondary'>{item.partnumber}</TableCell>
                     <TableCell className='text-secondary'>{item.location}</TableCell>
-                    <TableCell className='text-secondary'>{quantity}</TableCell>
+                    <TableCell className='text-secondary'>{item.quantity}</TableCell>
                   </TableRow>
                 ))
               ):(
