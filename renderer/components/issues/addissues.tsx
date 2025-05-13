@@ -55,21 +55,32 @@ const Addissues = () => {
     let referencenumber=jobnumber
     let newquantity=newq
 
+    let name = itemname
+    let prevQuantity = oldquantity
+    let addedQuantity = quantity
+    let newQuantity = newq
     setIsSubmitting(true)
     try {
-      const response = await fetch("http://localhost:8000/api/v1/issues", {
+      const response = await fetch("http://localhost:8000/api/v1/issue/add-issue", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({referencenumber,valuedate,transtype,transcode,customer,remarks,itemname,partnumber,location,quantity}),
       })
-       await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${itemid}`, {
+       await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${itemname}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({newquantity}),
+      })
+       await fetch('http://localhost:8000/api/v1/stock/addStockhistory', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({name,prevQuantity,addedQuantity,newQuantity}),
       })
 
       if (!response.ok) {
@@ -92,9 +103,9 @@ const Addissues = () => {
  
 const fetchItems = async()=>{
   setFetching(true)
-  const response = await fetch("http://localhost:8000/api/v1/stock/")
+  const response = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance/")
   const data = await response.json()
-  setItems(data.stock)
+  setItems(data.openbalance)
 
   const response1 = await fetch("http://localhost:8000/api/v1/customer/")
   const data1 = await response1.json()
@@ -104,14 +115,15 @@ const fetchItems = async()=>{
 }
 const handleItemChange = (e:any) => {
   const selectedId = e.target.value;
-  const selectedItem = fetchedItems.find((item:any) => item._id === selectedId);
+  const selectedItem = fetchedItems.find((item:any) => item.id == selectedId);
 
   if (selectedItem) {
-    setItemid(selectedItem._id)
+    setItemid(selectedItem.id)
     setOldQuantity(selectedItem.quantity)
     setItemname(selectedItem.name);
-    setPartNumber(selectedItem.partnumber || ''); 
-    setLocation(selectedItem.location || '');
+    setPartNumber(selectedItem.partnumber ); 
+    setLocation(selectedItem.location );
+    
   }
 };
  useEffect(() => {
@@ -191,7 +203,7 @@ const handleItemChange = (e:any) => {
     <select id="item" onChange={handleItemChange} className="col-span-3 border rounded px-2 py-1">
       <option value="">Select an item</option>
       {fetchedItems.map((item:any) => (
-        <option key={item._id} value={item._id}>
+        <option key={item.id} value={item.id}>
           {item.name}
         </option>
       ))}
@@ -207,6 +219,7 @@ const handleItemChange = (e:any) => {
       type="text"
       value={partnumber}
       onChange={(e) => setPartNumber(e.target.value)}
+      disabled
       className="col-span-3"
     />
           </div>
@@ -220,6 +233,7 @@ const handleItemChange = (e:any) => {
       type="text"
       value={location}
       onChange={(e) => setLocation(e.target.value)}
+      disabled
       className="col-span-3"
     />
           </div>
