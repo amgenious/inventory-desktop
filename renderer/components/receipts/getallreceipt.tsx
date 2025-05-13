@@ -222,11 +222,11 @@ export const columns: ColumnDef<Receipt>[] = [
 ]
 const Getallreceipt = () => {
     const [receipt, setReceipt] = React.useState<Receipt[]>([])
-    const [loading, setLoading] = React.useState(true)
+    const [loading, setLoading] = React.useState(false)
   
     const fetchReceipt = async () => {
       setLoading(true)
-      const response = await fetch("/api/receipt")
+      const response = await fetch("http://localhost:8000/api/v1/receipt")
       const data = await response.json()
       setReceipt(data.receipts)
       setLoading(false)

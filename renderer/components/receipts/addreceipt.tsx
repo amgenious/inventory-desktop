@@ -63,7 +63,7 @@ const Addreceipt = () => {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/receipt", {
+      const response = await fetch("http://localhost:8000/api/receipt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,13 +106,13 @@ const Addreceipt = () => {
   }
   const fetchItems = async () => {
     setFetching(true);
-    const response = await fetch("/api/stock/");
+    const response = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance");
     const data = await response.json();
-    setItems(data.stocks);
+    setItems(data.openbalance);
 
-    const response1 = await fetch("/api/supplier/");
+    const response1 = await fetch("http://localhost:8000/api/v1/supplier/");
     const data1 = await response1.json();
-    setFetchedSupplier(data1.suppliers);
+    setFetchedSupplier(data1.supplier);
 
     setFetching(false);
   };
