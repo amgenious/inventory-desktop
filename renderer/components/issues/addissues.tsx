@@ -15,7 +15,7 @@ import { Loader, Loader2, Plus, PlusCircle } from "lucide-react"
 import { useState,useEffect } from "react"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-
+import {z} from "zod"
 
 const Addissues = () => {
     const [valuedate, setValueDate] = useState("")
@@ -29,7 +29,19 @@ const Addissues = () => {
     const [location, setLocation] = useState("")
     const [quantity, setQuantity] = useState(0)
     const [oldquantity, setOldQuantity] = useState(0)
+    const [error, setError] = useState("");
     
+    const issueSchema = z.object({
+    valuedate:z.string().min(1, "Date cannot be empty"),
+    transtype:z.string().min(1, "Transtype cannot be empty"),
+    transcode:z.string().min(1," Trans code cannot be empty"),
+    customer:z.string().min(1, "String cannot be empty"),
+    remarks:z.string().min(1, "Remarks cannot be empty"),
+    itemname:z.string().min(1, "Item Name cannot be empty"),
+    partnumber:z.string().min(1, "Part number cannot be empty"),
+    location:z.string().min(1, "Location cannot be empty"),
+    quantity:z.number().positive("Quantity should be a positive number")
+  })
     const [fetchedItems, setItems] = useState<any>([])
     const [fetchedCustomer, setFetchedCustomer] = useState<any>([])
 
@@ -60,6 +72,32 @@ const Addissues = () => {
     let addedQuantity = quantity
     let newQuantity = newq
     setIsSubmitting(true)
+      const result = issueSchema.safeParse({
+      valuedate:valuedate,
+      transtype:transtype,
+      transcode:transcode,
+      customer:customer,
+      remarks:remarks,
+      itemname:itemname,
+      partnumber:partnumber,
+      location:location,
+      quantity:quantity
+    })
+    if(!result.success){
+      setError(
+      result.error.format().valuedate?._errors[0] ||
+      result.error.format().transtype?._errors[0] ||
+      result.error.format().transcode?._errors[0] ||
+      result.error.format().customer?._errors[0] ||
+      result.error.format().remarks?._errors[0] ||
+      result.error.format().itemname?._errors[0] ||
+      result.error.format().partnumber?._errors[0] ||
+      result.error.format().location?._errors[0] ||
+      result.error.format().quantity?._errors[0] ||
+      "Invalid Input");
+      setIsSubmitting(false)
+      return
+    }
     try {
       const response = await fetch("http://localhost:8000/api/v1/issue/add-issue", {
         method: "POST",
@@ -247,6 +285,7 @@ const handleItemChange = (e:any) => {
           </Label>
           <Input id="quantities" placeholder="Quantities" type="number" onChange={(e) => setQuantity(+e.target.value)} className="col-span-3" />
             </div>
+              {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
       </div>
       <DialogFooter>
         <Button type="submit" disabled={isSubmitting} onClick={onSubmit}>

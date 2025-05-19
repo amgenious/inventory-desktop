@@ -72,7 +72,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Value Date</div>,
     cell: ({ row }) => {
       return <div className="font-medium">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("valuedate")}
         </Badge>
         </div>
@@ -83,7 +83,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div>Trans Type</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("transtype")}
         </Badge>
         </div>
@@ -94,7 +94,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Trans Code</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("transcode")}
         </Badge>
         </div>
@@ -105,7 +105,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Customer</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("customer")}
         </Badge>
         </div>
@@ -116,9 +116,9 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Remarks</div>,
     cell: ({ row }) => {
       return <div>
-        <p className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("remarks")}
-        </p>
+        </Badge>
         </div>
     },
   },
@@ -137,9 +137,9 @@ export const columns: ColumnDef<Issues>[] = [
       },
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <p className="text-muted ml-4">
         {row.getValue("itemname")}
-        </Badge>
+        </p>
         </div>
     },
   },
@@ -148,7 +148,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Part Number</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("partnumber")}
         </Badge>
         </div>
@@ -159,7 +159,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Location</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("location")}
         </Badge>
         </div>
@@ -170,7 +170,7 @@ export const columns: ColumnDef<Issues>[] = [
     header: () => <div className="">Quantity</div>,
     cell: ({ row }) => {
       return <div>
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("quantity")}
         </Badge>
         </div>
