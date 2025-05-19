@@ -19,17 +19,17 @@ export function SectionCards() {
   const fetchParams = async () =>{
     setFetching(true)
     
-    const response = await fetch('/api/issues')
+    const response = await fetch('http://localhost:8000/api/v1/issue/')
     const data = await response.json()
     setFetchedIssues(data.issues.length)
 
-    const response1 = await fetch('/api/stock')
+    const response1 = await fetch('http://localhost:8000/api/v1/stock/getAllOpenBalance/')
     const data1 = await response1.json()
-    setFetchedStock(data1.stocks.length)
+    setFetchedStock(data1.openbalance.length)
 
-    const response2 = await fetch('/api/receipt')
+    const response2 = await fetch('http://localhost:8000/api/v1/receipt/')
     const data2 = await response2.json()
-    setFetchedReceipts(data2.receipts.length)
+    setFetchedReceipts(data2.receipt.length)
 
     setFetching(false)
   }
@@ -51,7 +51,7 @@ export function SectionCards() {
               <Skeleton className="h-10 w-32 mt-2 bg-gray-400!"/>
             ):(
               <>
-              {fetchedIssues}
+              <p className="text-white">{fetchedStock}</p>
               </>
             )
           }
@@ -73,7 +73,7 @@ export function SectionCards() {
               <Skeleton className="h-10 w-32 mt-2 bg-gray-400!"/>
             ):(
               <>
-              {fetchedStock} 
+              <p className="text-white">{fetchedIssues}</p> 
               </>
             )
           }
@@ -94,7 +94,7 @@ export function SectionCards() {
               <Skeleton className="h-10 w-32 mt-2 bg-gray-400!"/>
             ):(
               <>
-              {fetchedReceipts}
+              <p className="text-white"> {fetchedReceipts}</p>
               </>
             )
           }

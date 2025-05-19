@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { FolderArchive, GalleryVerticalEnd, SearchCheckIcon, Settings2, Ticket } from 'lucide-react'
-import { SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarContent, SidebarFooter } from '../ui/sidebar'
+import { SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarContent, SidebarFooter, SidebarMenuButton } from '../ui/sidebar'
 import { IconDashboard, IconListDetails, IconChartBar, IconFolder, IconUsers, IconDatabase, IconReport, IconFileWord, IconLogout } from '@tabler/icons-react'
 import { NavMain } from '../dashboard/nav-main'
 import { NavDocuments } from '../dashboard/nav-documents'

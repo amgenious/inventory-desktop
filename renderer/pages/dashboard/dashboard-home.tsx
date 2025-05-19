@@ -7,7 +7,7 @@ const DashboardhomePage = () => {
   return (
     <Layout>
      <SectionCards />
-    <DataTable />
+    {/* <DataTable /> */}
     </Layout>
   );
 };
