@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import {z} from "zod"
 
 const Addreceipt = () => {
   const [valuedate, setValueDate] = useState("");
@@ -36,6 +37,21 @@ const Addreceipt = () => {
   const [location, setLocation] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [oldquantity, setOldQuantity] = useState(0);
+  const [error, setError] = useState("");
+
+  const receiptSchema = z.object({
+    valuedate:z.string().min(1, "Date cannot be empty"),
+    invoicenumber:z.string().min(1, "Invoice number cannot be empty"),
+    invoicedate:z.string().min(1, "Invoice Date cannot be empty"),
+    transtype:z.string().min(1, "Transtype cannot be empty"),
+    transcode:z.string().min(1," Trans code cannot be empty"),
+    supplier:z.string().min(1, "String cannot be empty"),
+    remarks:z.string().min(1, "Remarks cannot be empty"),
+    itemname:z.string().min(1, "Item Name cannot be empty"),
+    partnumber:z.string().min(1, "Part number cannot be empty"),
+    location:z.string().min(1, "Location cannot be empty"),
+    quantity:z.number().positive("Quantity should be a positive number")
+  })
 
   const [fetchedItems, setItems] = useState<any>([]);
   const [fetchedSupplier, setFetchedSupplier] = useState<any>([]);
@@ -61,9 +77,44 @@ const Addreceipt = () => {
     let referencenumber = jobnumber;
     let newquantity = newq;
 
+    let name = itemname
+    let prevQuantity = oldquantity
+    let addedQuantity = quantity
+    let newQuantity = newq
+
     setIsSubmitting(true);
+    const result = receiptSchema.safeParse({
+      valuedate:valuedate,
+      invoicedate:invoicedate,
+      invoicenumber:invoicenumber,
+      transtype:transtype,
+      transcode:transcode,
+      supplier:supplier,
+      remarks:remarks,
+      itemname:itemname,
+      partnumber:partnumber,
+      location:location,
+      quantity:quantity
+    })
+    if(!result.success){
+      setError(
+      result.error.format().valuedate?._errors[0] ||
+      result.error.format().invoicedate?._errors[0] ||
+      result.error.format().invoicenumber?._errors[0] ||
+      result.error.format().transtype?._errors[0] ||
+      result.error.format().transcode?._errors[0] ||
+      result.error.format().supplier?._errors[0] ||
+      result.error.format().remarks?._errors[0] ||
+      result.error.format().itemname?._errors[0] ||
+      result.error.format().partnumber?._errors[0] ||
+      result.error.format().location?._errors[0] ||
+      result.error.format().quantity?._errors[0] ||
+      "Invalid Input");
+      setIsSubmitting(false)
+      return
+    }
     try {
-      const response = await fetch("http://localhost:8000/api/receipt", {
+      const response = await fetch("http://localhost:8000/api/v1/receipt/add-receipt", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,23 +134,29 @@ const Addreceipt = () => {
           quantity,
         }),
       });
-      await fetch(`/api/stock/${itemid}`, {
+      await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${itemname}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ newquantity }),
       });
-
+       await fetch('http://localhost:8000/api/v1/stock/addStockhistory', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({name,prevQuantity,addedQuantity,newQuantity}),
+      })
       if (!response.ok) {
         const error = await response.json();
         console.log(error);
         throw new Error(error.message || "Failed to create new receipt");
       }
 
-      toast("Success! New Receipt has been created.");
+      toast.success("Success! New Receipt has been created.");
     } catch (error) {
-      toast(`Failed to create new receipt, Error: ${error}`);
+      toast.error(`Error: ${error}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -119,15 +176,15 @@ const Addreceipt = () => {
   const handleItemChange = (e: any) => {
     const selectedId = e.target.value;
     const selectedItem = fetchedItems.find(
-      (item: any) => item._id === selectedId
+      (item: any) => item.id == selectedId
     );
 
     if (selectedItem) {
-      setItemid(selectedItem._id);
+      setItemid(selectedItem.id);
       setOldQuantity(selectedItem.quantity);
       setItemname(selectedItem.name);
-      setPartNumber(selectedItem.partnumber || "");
-      setLocation(selectedItem.location || "");
+      setPartNumber(selectedItem.partnumber);
+      setLocation(selectedItem.location);
     }
   };
   useEffect(() => {
@@ -216,8 +273,8 @@ const Addreceipt = () => {
               <Loader className="h-4 w-full animate-spin text-center" />
             ) : (
               <Select onValueChange={setSupplier} value={supplier}>
-                <SelectTrigger id="customer" className="w-full">
-                  <SelectValue placeholder="Select Customer" />
+                <SelectTrigger id="supplier" className="w-full">
+                  <SelectValue placeholder="Select Supplier" />
                 </SelectTrigger>
                 <SelectContent>
                   {fetchedSupplier.map((item: any, index: number) => (
@@ -257,7 +314,7 @@ const Addreceipt = () => {
                   >
                     <option value="">Select an item</option>
                     {fetchedItems.map((item: any) => (
-                      <option key={item._id} value={item._id}>
+                      <option key={item.id} value={item.id}>
                         {item.name}
                       </option>
                     ))}
@@ -304,6 +361,7 @@ const Addreceipt = () => {
               className="col-span-3"
             />
           </div>
+           {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
         </div>
         <DialogFooter>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit}>

@@ -73,7 +73,7 @@ export const columns: ColumnDef<Receipt>[] = [
     header: () => <div className="">Value Date</div>,
     cell: ({ row }) => {
       return <div className="font-medium">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("valuedate")}
         </Badge>
         </div>
@@ -84,7 +84,7 @@ export const columns: ColumnDef<Receipt>[] = [
     header: () => <div className="">Invoice Number</div>,
     cell: ({ row }) => {
       return <div className="font-medium">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
+        <Badge variant="outline" className="text-muted px-1.5">
         {row.getValue("invoicenumber")}
         </Badge>
         </div>
@@ -104,7 +104,7 @@ export const columns: ColumnDef<Receipt>[] = [
         )
       },
     cell: ({ row }) => {
-      return <div>{row.getValue("invoicedate")}</div>
+      return <div className="ml-4">{row.getValue("invoicedate")}</div>
     },
   },
    {
@@ -112,7 +112,7 @@ export const columns: ColumnDef<Receipt>[] = [
       header: () => <div>Trans Type</div>,
       cell: ({ row }) => {
         return <div>
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Badge variant="outline" className="text-muted px-1.5">
           {row.getValue("transtype")}
           </Badge>
           </div>
@@ -123,7 +123,7 @@ export const columns: ColumnDef<Receipt>[] = [
       header: () => <div className="">Trans Code</div>,
       cell: ({ row }) => {
         return <div>
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Badge variant="outline" className="text-muted px-1.5">
           {row.getValue("transcode")}
           </Badge>
           </div>
@@ -134,7 +134,7 @@ export const columns: ColumnDef<Receipt>[] = [
         header: () => <div className="">Supplier</div>,
         cell: ({ row }) => {
           return <div>
-            <Badge variant="outline" className="text-muted-foreground px-1.5">
+            <Badge variant="outline" className="text-muted px-1.5">
             {row.getValue("supplier")}
             </Badge>
             </div>
@@ -145,7 +145,7 @@ export const columns: ColumnDef<Receipt>[] = [
         header: () => <div className="">Remarks</div>,
         cell: ({ row }) => {
           return <div>
-            <p className="text-muted-foreground px-1.5">
+            <p className="text-muted px-1.5">
             {row.getValue("remarks")}
             </p>
             </div>
@@ -165,7 +165,7 @@ export const columns: ColumnDef<Receipt>[] = [
         )
       },
     cell: ({ row }) => {
-      return <div>{row.getValue("itemname")}</div>
+      return <div className="ml-4">{row.getValue("itemname")}</div>
     },
   },
     {
@@ -173,7 +173,7 @@ export const columns: ColumnDef<Receipt>[] = [
       header: () => <div className="">Part Number</div>,
       cell: ({ row }) => {
         return <div>
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Badge variant="outline" className="text-muted px-1.5">
           {row.getValue("partnumber")}
           </Badge>
           </div>
@@ -184,7 +184,7 @@ export const columns: ColumnDef<Receipt>[] = [
       header: () => <div className="">Location</div>,
       cell: ({ row }) => {
         return <div>
-          <Badge variant="outline" className="text-muted-foreground px-1.5">
+          <Badge variant="outline" className="text-muted px-1.5">
           {row.getValue("location")}
           </Badge>
           </div>
@@ -228,7 +228,7 @@ const Getallreceipt = () => {
       setLoading(true)
       const response = await fetch("http://localhost:8000/api/v1/receipt")
       const data = await response.json()
-      setReceipt(data.receipts)
+      setReceipt(data.receipt)
       setLoading(false)
     }
     const [sorting, setSorting] = React.useState<SortingState>([])
@@ -254,9 +254,9 @@ const Getallreceipt = () => {
                   rowSelection,
                 },
               })
-    //  React.useEffect(() => {
-    //        fetchReceipt()
-    //   }, [])            
+     React.useEffect(() => {
+           fetchReceipt()
+      }, [])            
   return (
     <div className="w-full">
                 <div className="flex items-center py-4">
