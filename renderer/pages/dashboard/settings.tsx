@@ -11,14 +11,14 @@ const SettingPage = () => {
     <Layout>
     <div className="px-4 py-6">
             <Heading title="Settings" description="Manage your profile and account settings" />
-            <Tabs defaultValue="location" className="w-full flex flex-row gap-5 ">
+            <Tabs defaultValue="profile" className="w-full flex flex-row gap-5 ">
       <TabsList className="flex flex-col gap-4 h-full w-[150px]">
-        <TabsTrigger value="appearance" className='w-full flex justify-start cursor-pointer'>Appearance</TabsTrigger>
+        {/* <TabsTrigger value="appearance" className='w-full flex justify-start cursor-pointer'>Appearance</TabsTrigger> */}
         <TabsTrigger value="profile" className='w-full flex justify-start cursor-pointer'>Profile</TabsTrigger>
         <TabsTrigger value="password"  className='w-full flex justify-start cursor-pointer'>Password</TabsTrigger>
       </TabsList>
       <TabsContent value="appearance">
-         <AppearancePage /> 
+         {/* <AppearancePage />  */}
       </TabsContent>
       <TabsContent value="profile">
         <ProfilePage />
