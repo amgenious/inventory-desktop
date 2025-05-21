@@ -2,30 +2,22 @@
 import Layout from '../layout'
 import  React,{useState, useEffect} from "react";
 import { Input } from "@/components/ui/input";
-import { format, isAfter, isBefore } from "date-fns";
-import { CalendarIcon, File, Loader2, Search,} from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { File, Loader2, Search,} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 
 import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from 'sonner'
+import { Label } from '@/components/ui/label';
 
 
 const InventoryPage = () => {
     const [name, setName] = useState("");
-    // const [startDate, setStartDate] = useState<Date>();
-    // const [endDate, setEndDate] = useState<Date>();
+    const [startDate, setStartDate] = useState<any>();
+    const [endDate, setEndDate] = useState<any>();
     const [partnumber, setPartnumber] = useState("");
     const [location, setLocation] = useState("");
-    const [quantity, setQuantity] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [filteredData, setFilteredData] = useState<any>([]);
 
@@ -53,7 +45,8 @@ const InventoryPage = () => {
       if (name) params.append("name", name);
   if (partnumber) params.append("partnumber", partnumber);
   if (location) params.append("location", location);
-  if (quantity) params.append("quantity",quantity.toString());
+  if (startDate) params.append("startDate",startDate.split("T")[0]);
+  if (endDate) params.append("endDate",endDate.split("T")[0]);
 
   const queryString = params.toString();
       try{
@@ -122,9 +115,7 @@ const InventoryPage = () => {
         <Input placeholder="Stock Name" className="w-fit border-none dark:bg-white dark:text-black" 
             onChange={(e) => setName(e.target.value)} />
         <Input placeholder="Part Number" className="w-fit border-none dark:bg-white dark:text-black" 
-            onChange={(e) => setPartnumber(e.target.value)} />
-        {/* <Input placeholder="Quantity" type="number" className="w-fit border-none dark:bg-white dark:text-black" 
-            onChange={(e) => setQuantity(+e.target.value)} /> */}
+            onChange={(e) => setPartnumber(e.target.value)} />  
         {
             fetching ? (
               <Loader2  className="h-4 w-full animate-spin text-center"/>
@@ -143,48 +134,19 @@ const InventoryPage = () => {
                 </SelectContent>
           </Select>
             )
-          }  
-           {/* {
-            fetching ? (
-              <Loader2  className="h-4 w-full animate-spin text-center"/>
-            ):(
-          <Select onValueChange={setCategory} value={category}>
-                  <SelectTrigger id="category" className="border-none dark:bg-white dark:text-black">
-                    <SelectValue placeholder="Select Category" />
-                  </SelectTrigger>
-                  <SelectContent className='border-none dark:bg-white dark:text-black'>
-                  {
-                    fetchedCategory.map((item: any, index: number) => (
-                      <SelectItem value={item.name} key={index}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-          </Select>
-            )
-          }   */}
-        {/* <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal",
-                !startDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon />
-              {startDate ? format(startDate, "PPP") : "Date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={startDate}
-              onSelect={setStartDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover> */}
+          } 
+          <div>
+            <Label className="text-muted py-1">Start Date</Label>
+            <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+            onChange={(e)=> setStartDate(e.target.value)}
+            />  
+            </div> 
+            <div>
+            <Label className="text-muted py-1">End Date</Label>
+            <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+            onChange={(e)=> setEndDate(e.target.value)}
+            />  
+            </div> 
         </div>
         <Button variant="default" disabled={isSubmitting} onClick={onSubmit} className="cursor-pointer">
           {

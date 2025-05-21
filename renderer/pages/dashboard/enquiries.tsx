@@ -1,18 +1,8 @@
 "use client"    
 import  React,{useState, useEffect} from "react";
 import { Input } from "@/components/ui/input";
-import { format, isAfter, isBefore } from "date-fns";
-import { CalendarIcon, File, Loader, Loader2, Search,} from "lucide-react";
-
-import { cn } from "@/lib/utils";
+import { File, Loader2, Search,} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
 import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from 'sonner'
@@ -20,12 +10,13 @@ import { toast } from 'sonner'
 import Layout from './layout'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { IconPdf } from "@tabler/icons-react";
+import { Label } from "@/components/ui/label";
 
 const EnquiriesReportPage = () => {
         const [name, setName] = useState("");
-        const [startDate, setStartDate] = useState<Date>();
+        const [startDate, setStartDate] = useState<any>();
         const [category, setCategory] = useState("");
-        const [endDate, setEndDate] = useState<Date>();
+        const [endDate, setEndDate] = useState<any>();
         const [partnumber, setPartnumber] = useState("");
         const [location, setLocation] = useState("");
         const [description, setDescription] = useState("");
@@ -57,6 +48,8 @@ const EnquiriesReportPage = () => {
   if (location) params.append("location", location);
   if (category) params.append("category", category)
   if (description) params.append("description",description);
+  if (startDate) params.append("startDate",startDate.split("T")[0]);
+  if (endDate) params.append("endDate",endDate.split("T")[0]);
 
   const queryString = params.toString();
       try{
@@ -128,9 +121,9 @@ const EnquiriesReportPage = () => {
     <Layout>
     <div className='flex justify-between w-full pb-5'>
         <h2 className='text-xl font-bold text-black'>Enquiry</h2>
-        <Button onClick={fetchParams}><Loader /></Button>
     </div>
     <div className="w-full flex justify-between py-5 hide-on-print">
+      <div>
         <div className="flex gap-4">
         <Input placeholder="Stock Name" className="w-fit border-none dark:bg-white dark:text-black" 
             onChange={(e) => setName(e.target.value)} />
@@ -177,29 +170,22 @@ const EnquiriesReportPage = () => {
                 </SelectContent>
           </Select>
             )
-          }  
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal",
-                !startDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2"/>
-              {startDate ? format(startDate, "PPP") : "Date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={startDate}
-              onSelect={setStartDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+          }
+          </div>
+          <div className="mt-2 flex gap-5"> 
+            <div>
+            <Label className="text-muted py-1">Start Date</Label>
+            <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+            onChange={(e)=> setStartDate(e.target.value)}
+            />  
+            </div> 
+            <div>
+            <Label className="text-muted py-1">End Date</Label>
+            <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+            onChange={(e)=> setEndDate(e.target.value)}
+            />  
+            </div> 
+        </div>
         </div>
         <Button variant="default" disabled={isSubmitting} onClick={onSubmit} className="cursor-pointer">
           {

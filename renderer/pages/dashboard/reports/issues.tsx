@@ -3,24 +3,20 @@ import Layout from '../layout'
 import  React,{useState, useEffect} from "react";
 import { Input } from '@/components/ui/input'
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, File, Loader2, Search } from 'lucide-react'
-import { Separator } from "@/components/ui/separator";
+import { File, Loader2, Search } from 'lucide-react'
 import {Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from 'sonner'
 import { Skeleton } from "@/components/ui/skeleton";
 import { IconPdf } from "@tabler/icons-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Label } from '@/components/ui/label';
 
 const IssuesRerport = () => {
     const [referencenumber, setReferencenumber] = useState("");
-    const [startDate, setStartDate] = useState<Date>();
-    const [endDate, setEndDate] = useState<Date>();
+    const [startDate, setStartDate] = useState<any>();
+    const [endDate, setEndDate] = useState<any>();
     const [customer, setCustomer] = useState("");
     const [partnumber, setPartnumber] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -50,8 +46,8 @@ const IssuesRerport = () => {
           if (referencenumber) params.append("referencenumber", referencenumber);
           if (partnumber) params.append("partnumber", partnumber);
           if (customer) params.append("customer", customer);
-          if (startDate) params.append("startDate",startDate.toISOString().split("T")[0]);
-          if (endDate) params.append("endDate",endDate.toISOString().split("T")[0]);
+          if (startDate) params.append("startDate",startDate.split("T")[0]);
+          if (endDate) params.append("endDate",endDate.split("T")[0]);
           
           const queryString = params.toString();
           try{
@@ -174,50 +170,18 @@ const IssuesRerport = () => {
           }  
         </div>
         <div className="flex gap-4">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal border-none",
-                !startDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className='mr-2' />
-              {startDate ? format(startDate, "PPP") : " Start Date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={startDate}
-              onSelect={setStartDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal border-none",
-                !endDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon  className='mr-2'/>
-              {endDate ? format(endDate, "PPP") : " End Date"}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={endDate}
-              onSelect={setEndDate}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+        <div>
+                    <Label className="text-muted py-1">Start Date</Label>
+                    <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+                    onChange={(e)=> setStartDate(e.target.value)}
+                    />  
+                    </div> 
+                    <div>
+                    <Label className="text-muted py-1">End Date</Label>
+                    <Input type="date" className="border-none dark:bg-slate-400 dark:text-black"
+                    onChange={(e)=> setEndDate(e.target.value)}
+                    />  
+                    </div> 
         </div>
         </div>
         <Button variant="default" disabled={isSubmitting} onClick={onSubmit}  className="cursor-pointer hide-on-print">
