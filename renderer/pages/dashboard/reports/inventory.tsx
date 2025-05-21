@@ -123,8 +123,8 @@ const InventoryPage = () => {
             onChange={(e) => setName(e.target.value)} />
         <Input placeholder="Part Number" className="w-fit border-none dark:bg-white dark:text-black" 
             onChange={(e) => setPartnumber(e.target.value)} />
-        <Input placeholder="Quantity" type="number" className="w-fit border-none dark:bg-white dark:text-black" 
-            onChange={(e) => setQuantity(+e.target.value)} />
+        {/* <Input placeholder="Quantity" type="number" className="w-fit border-none dark:bg-white dark:text-black" 
+            onChange={(e) => setQuantity(+e.target.value)} /> */}
         {
             fetching ? (
               <Loader2  className="h-4 w-full animate-spin text-center"/>
