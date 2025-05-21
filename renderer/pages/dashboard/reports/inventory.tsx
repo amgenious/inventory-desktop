@@ -220,7 +220,7 @@ const InventoryPage = () => {
           <TableBody>
             {filteredData.length ? (
               filteredData.map((item:any) => (
-                <TableRow key={item._id}>
+                <TableRow key={item.id}>
                   <TableCell className='text-muted'>{formatDate(item.createdAt)}</TableCell>
                   <TableCell className='text-muted'>{item.name}</TableCell>
                   <TableCell className='text-muted'>{item.location}</TableCell>
