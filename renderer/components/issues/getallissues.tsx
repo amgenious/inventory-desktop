@@ -208,7 +208,6 @@ const Getallissues = () => {
     const response = await fetch("http://localhost:8000/api/v1/issue/")
     const data = await response.json()
     setIssue(data.issues)
-    console.log(data.issues)
     setLoading(false)
   }
 

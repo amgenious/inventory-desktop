@@ -31,15 +31,20 @@ const Issuescorrection = () => {
   const [newcustomer, setNewcustomer] = useState("");
   const [newremarks, setNewremarks] = useState("");
   const [fetchedCustomer, setFetchedCustomer] = useState<any>([]);
+  const [issue, setIssue] = useState<any>([]);
   const [fetching, setFetching] = useState(false);
   const [isUpdating, setIsUpdating] = React.useState(false);
 
   const fetchItems = async () => {
     setFetching(true);
 
-    const response1 = await fetch("/api/customer/");
+    const response1 = await fetch("http://localhost:8000/api/v1/customer/");
     const data1 = await response1.json();
-    setFetchedCustomer(data1.customers);
+    setFetchedCustomer(data1.customer);
+
+    const response = await fetch("http://localhost:8000/api/v1/issue/")
+    const data = await response.json()
+    setIssue(data.issues)
 
     setFetching(false);
   };
@@ -47,7 +52,7 @@ const Issuescorrection = () => {
   async function onSubmit() {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`/api/issues/search?query=${query}`);
+      const response = await fetch(`http://localhost:8000/api/v1/issue/search?query=${query}`);
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message || "Failed to search the item");
@@ -68,7 +73,7 @@ const Issuescorrection = () => {
     let customer = newcustomer || searchedData.customer;
     let remarks = newremarks || searchedData.remarks;
     try {
-      const response = await fetch(`/api/issues/${searchedData._id}`, {
+      const response = await fetch(`http://localhost:8000/api/v1/issue/update/${searchedData.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -96,12 +101,25 @@ const Issuescorrection = () => {
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-center p-5 border-[1px] rounded-md w-full">
           <div className="flex gap-5 w-2/4">
-            <Input
-              placeholder="Enter Issue Reference Number"
-              type="number"
-              onChange={(e) => setQuery(e.target.value)}
-              className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black"
-            />
+          {
+            fetching ? (<Loader className="h-4 w-full animate-spin text-center"/>):
+            (
+          <Select onValueChange={setQuery}>
+            <SelectTrigger className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black">
+              <SelectValue placeholder="Select Issue Referencenumber"/>
+            </SelectTrigger>
+            <SelectContent className="max-w-sm border-none dark:bg-white dark:text-black">
+              {
+                issue.map((item:any,index:number) => (
+              <SelectItem value={item.referencenumber} key={index}>
+                {item.referencenumber}
+              </SelectItem>
+                ))
+              }
+            </SelectContent>
+          </Select>
+            )
+          }
             <Button
               className="cursor-pointer"
               disabled={isSubmitting}
@@ -123,39 +141,39 @@ const Issuescorrection = () => {
           <div className="p-5 border-[1px] rounded-md w-full">
             <div className="flex gap-10 w-full">
               <div className="flex gap-5 w-1/2">
-                <Label>Reference Number</Label>
+                <Label className="text-black">Reference Number</Label>
                 <Input
                   placeholder="ref.number"
                   value={searchedData.referencenumber}
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
               </div>
               <div className="flex gap-2 w-1/2">
-                <Label>Value Date</Label>
+                <Label className="text-black">Value Date</Label>
                 <Input
                   placeholder="value date"
                   value={searchedData.valuedate}
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
               </div>
             </div>
             <div className="flex gap-10 w-full my-8">
               <div className="flex gap-5 w-1/2">
-                <Label>Trans Type</Label>
+                <Label className="text-black">Trans Type</Label>
                 <Input
                   placeholder="Trans Type"
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transtype}
                   onChange={(e) => setNewtranstype(e.target.value)}
                 />
               </div>
               <div className="flex gap-2 w-1/2">
-                <Label>Trans Code</Label>
+                <Label className="text-black">Trans Code</Label>
                 <Input
                   placeholder="Trans Code"
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transcode}
                   onChange={(e) => setNewtranscode(e.target.value)}
                 />
@@ -163,7 +181,7 @@ const Issuescorrection = () => {
             </div>
             <div className="flex gap-10 w-full my-8">
               <div className="flex gap-5 w-1/2">
-                <Label>Customer</Label>
+                <Label className="text-black">Customer</Label>
                 {fetching ? (
                   <Loader className="h-4 w-full animate-spin text-center" />
                 ) : (
@@ -172,7 +190,7 @@ const Issuescorrection = () => {
                     value={newcustomer}
                     defaultValue={searchedData.customer}
                   >
-                    <SelectTrigger id="customer" className="w-full">
+                    <SelectTrigger id="customer" className="w-full border-none dark:bg-white dark:text-black">
                       <SelectValue placeholder="Select Customer" />
                     </SelectTrigger>
                     <SelectContent>
@@ -186,10 +204,10 @@ const Issuescorrection = () => {
                 )}
               </div>
               <div className="flex gap-2 w-1/2">
-                <Label>Remarks</Label>
+                <Label className="text-black">Remarks</Label>
                 <Input
                   placeholder="Remarks"
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.remarks}
                   onChange={(e) => setNewremarks(e.target.value)}
                 />
@@ -199,32 +217,32 @@ const Issuescorrection = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Item Name</TableHead>
-                    <TableHead>Part Number</TableHead>
-                    <TableHead>Location</TableHead>
+                    <TableHead className="text-black">Item Name</TableHead>
+                    <TableHead className="text-black">Part Number</TableHead>
+                    <TableHead className="text-black">Location</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-muted">
                       {searchedData.itemname}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-muted">
                       {searchedData.partnumber}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-muted">
                       {searchedData.location}
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
               <div className="flex justify-center items-center gap-2 w-1/2">
-                <Label>Quantity</Label>
+                <Label className="text-black">Quantity</Label>
                 <Input
                   placeholder="quantity"
                   type="number"
                   value={searchedData.quantity}
-                  className="w-3/4"
+                  className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
               </div>
