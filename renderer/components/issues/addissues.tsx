@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import {z} from "zod"
 
 const Addissues = () => {
+    const [referencenumber, setReferenceNumber] = useState("")
     const [valuedate, setValueDate] = useState("")
     const [transtype, setTranstype] = useState("")
     const [transcode, setTransCode] = useState("")
@@ -32,6 +33,7 @@ const Addissues = () => {
     const [error, setError] = useState("");
     
     const issueSchema = z.object({
+    referencenumber:z.string().min(1, "Reference Number cannot be empty"),
     valuedate:z.string().min(1, "Date cannot be empty"),
     transtype:z.string().min(1, "Transtype cannot be empty"),
     transcode:z.string().min(1," Trans code cannot be empty"),
@@ -53,18 +55,16 @@ const Addissues = () => {
     const month = String(to.getMonth() + 1).padStart(2, '0'); 
     const year = to.getFullYear();
     const today =  `${day}/${month}/${year}`
-
-    const prefix = Math.random().toString();
-    const newT = prefix.slice(14,18)
-    const job = `${newT}${day}${month}${year}`;
-    const jobnumber = job.replace(/[-:]/g, '');
-
     
+    const prefix = Math.random().toString();
+    const newT = prefix.slice(14, 17);
+
     async function onSubmit(){
     var newq = oldquantity - quantity
     
     let valuedate=today
-    let referencenumber=jobnumber
+    let transtype = "I";
+    let transcode = `I${newT}`
     let newquantity=newq
 
     let name = itemname
@@ -73,6 +73,7 @@ const Addissues = () => {
     let newQuantity = newq
     setIsSubmitting(true)
       const result = issueSchema.safeParse({
+      referencenumber:referencenumber,  
       valuedate:valuedate,
       transtype:transtype,
       transcode:transcode,
@@ -85,6 +86,7 @@ const Addissues = () => {
     })
     if(!result.success){
       setError(
+      result.error.format().referencenumber?._errors[0] ||
       result.error.format().valuedate?._errors[0] ||
       result.error.format().transtype?._errors[0] ||
       result.error.format().transcode?._errors[0] ||
@@ -181,23 +183,29 @@ const handleItemChange = (e:any) => {
       </DialogHeader>
       <div className="grid gap-4 py-4">
         <div className="grid grid-cols-4 items-center gap-4">
+          <Label htmlFor="referencenumber" className="text-right">
+            Reference Number
+          </Label>
+          <Input id="referencenumber" onChange={(e) => setReferenceNumber(e.target.value)} className="col-span-3" />
+        </div>
+        <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="date" className="text-right">
             Value Date
           </Label>
           <Input id="date" onChange={(e) => setValueDate(today)} value={today} className="col-span-3" disabled />
         </div>
-        <div className="grid grid-cols-4 items-center gap-4">
+        {/* <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="transtype" className="text-right">
               Trans Type
           </Label>
           <Input id="transtype" placeholder="Trans Type" onChange={(e) => setTranstype(e.target.value)} className="col-span-3" />
-        </div>
-        <div className="grid grid-cols-4 items-center gap-4">
+        </div> */}
+        {/* <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="transcode" className="text-right">
               Trans Code
           </Label>
           <Input id="transcode" placeholder="Trans Code" onChange={(e) => setTransCode(e.target.value)} className="col-span-3" />
-        </div>
+        </div> */}
         <div className="grid grid-cols-4 items-center gap-4">
           <Label htmlFor="customer" className="text-right">
               Customer

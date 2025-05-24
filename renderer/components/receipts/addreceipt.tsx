@@ -24,6 +24,7 @@ import {
 import {z} from "zod"
 
 const Addreceipt = () => {
+  const [referencenumber, setReferenceNumber] = useState("");
   const [valuedate, setValueDate] = useState("");
   const [invoicenumber, setInvoiceNumber] = useState("");
   const [invoicedate, setInvoiceDate] = useState("");
@@ -40,6 +41,7 @@ const Addreceipt = () => {
   const [error, setError] = useState("");
 
   const receiptSchema = z.object({
+    referencenumber:z.string().min(1, "Reference Number cannot be empty"),
     valuedate:z.string().min(1, "Date cannot be empty"),
     invoicenumber:z.string().min(1, "Invoice number cannot be empty"),
     invoicedate:z.string().min(1, "Invoice Date cannot be empty"),
@@ -66,15 +68,14 @@ const Addreceipt = () => {
   const today = `${day}/${month}/${year}`;
 
   const prefix = Math.random().toString();
-  const newT = prefix.slice(14, 18);
-  const job = `${newT}${day}${month}${year}`;
-  const jobnumber = job.replace(/[-:]/g, "");
+  const newT = prefix.slice(14, 17);
 
   async function onSubmit() {
     var newq = oldquantity + quantity;
 
     let valuedate = today;
-    let referencenumber = jobnumber;
+    let transtype = "R";
+    let transcode = `R${newT}`
     let newquantity = newq;
 
     let name = itemname
@@ -84,6 +85,7 @@ const Addreceipt = () => {
 
     setIsSubmitting(true);
     const result = receiptSchema.safeParse({
+      referencenumber:referencenumber,
       valuedate:valuedate,
       invoicedate:invoicedate,
       invoicenumber:invoicenumber,
@@ -98,6 +100,7 @@ const Addreceipt = () => {
     })
     if(!result.success){
       setError(
+      result.error.format().referencenumber?._errors[0] ||
       result.error.format().valuedate?._errors[0] ||
       result.error.format().invoicedate?._errors[0] ||
       result.error.format().invoicenumber?._errors[0] ||
@@ -206,6 +209,16 @@ const Addreceipt = () => {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="referencenumber" className="text-right">
+              Reference Number
+            </Label>
+            <Input
+              id="referencenumber"
+              onChange={(e) => setReferenceNumber(e.target.value)}
+              className="col-span-3"
+            />
+          </div>
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="valude" className="text-right">
               Value Date
             </Label>
@@ -243,7 +256,7 @@ const Addreceipt = () => {
               />
             </div>
           </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="transtype" className="text-right">
               Trans Type
             </Label>
@@ -253,8 +266,8 @@ const Addreceipt = () => {
               onChange={(e) => setTranstype(e.target.value)}
               className="col-span-3"
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
+          </div> */}
+          {/* <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="transcode" className="text-right">
               Trans Code
             </Label>
@@ -264,7 +277,7 @@ const Addreceipt = () => {
               onChange={(e) => setTransCode(e.target.value)}
               className="col-span-3"
             />
-          </div>
+          </div> */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="customer" className="text-right">
               Supplier
