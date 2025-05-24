@@ -5,11 +5,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import AppearancePage from '@/components/appearance/appearancePage'
 import ProfilePage from '@/components/profile/profilePage'
 import Updatepassword from '@/components/password/update-password'
+import { useAuth } from "@/hooks/use-auth"
 
 const SettingPage = () => {
+   const { user } = useAuth()
+
   return (
     <Layout>
-    <div className="px-4 py-6">
+      {
+        user.role === "admin" ? ( <div className="px-4 py-6">
             <Heading title="Settings" description="Manage your profile and account settings" />
             <Tabs defaultValue="profile" className="w-full flex flex-row gap-5 ">
       <TabsList className="flex flex-col gap-4 h-full w-[150px]">
@@ -27,7 +31,8 @@ const SettingPage = () => {
         <Updatepassword />
       </TabsContent>
     </Tabs>
-    </div>
+    </div>): (<p className='text-secondary'>You are not eligible to see this page</p>)
+      }
     </Layout>
   )
 }

@@ -4,14 +4,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader, Loader2, Search } from "lucide-react";
 import { Label } from "../ui/label";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
 import { toast } from "sonner";
 import {
   Select,
@@ -20,8 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useAuth } from "@/hooks/use-auth"
 
 const OpenBalanceCorrectionPage = () => {
+    const { user } = useAuth()
     const [newquantity, setNewQuantity] = useState(0)
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [searchedData, setSearchedData] = useState<any>([]);
@@ -171,7 +165,8 @@ const OpenBalanceCorrectionPage = () => {
                 />
               </div>
             </div>
-            <Button
+            {
+              user?.role === 'admin' &&             <Button
               className="cursor-pointer"
               disabled={isUpdating}
               onClick={onUpdate}
@@ -185,6 +180,7 @@ const OpenBalanceCorrectionPage = () => {
                 "Update"
               )}
             </Button> 
+            }
           </div>
         ) : (
           <div className=" w-full text-center italic">

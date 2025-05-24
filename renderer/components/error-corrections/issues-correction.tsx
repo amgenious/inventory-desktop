@@ -20,8 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useAuth } from "@/hooks/use-auth"
 
 const Issuescorrection = () => {
+  const { user } = useAuth()
   const [query, setQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
@@ -247,7 +249,8 @@ const Issuescorrection = () => {
                 />
               </div>
             </div>
-            <Button
+            {
+              user?.role === 'admin' && <Button
               className="cursor-pointer"
               disabled={isUpdating}
               onClick={onUpdate}
@@ -261,6 +264,7 @@ const Issuescorrection = () => {
                 "Update"
               )}
             </Button>
+            }
           </div>
         ) : (
           <div className=" w-full text-center italic">
