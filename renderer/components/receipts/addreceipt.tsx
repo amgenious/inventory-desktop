@@ -22,24 +22,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import {z} from "zod"
-
-const Addreceipt = () => {
-  const [referencenumber, setReferenceNumber] = useState("");
-  const [valuedate, setValueDate] = useState("");
-  const [invoicenumber, setInvoiceNumber] = useState("");
-  const [invoicedate, setInvoiceDate] = useState("");
-  const [transtype, setTranstype] = useState("");
-  const [transcode, setTransCode] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [remarks, setRemarks] = useState("");
-  const [itemid, setItemid] = useState("");
-  const [itemname, setItemname] = useState("");
-  const [partnumber, setPartNumber] = useState("");
-  const [location, setLocation] = useState("");
-  const [quantity, setQuantity] = useState(0);
-  const [oldquantity, setOldQuantity] = useState(0);
-  const [error, setError] = useState("");
-
   const receiptSchema = z.object({
     referencenumber:z.string().min(1, "Reference Number cannot be empty"),
     valuedate:z.string().min(1, "Date cannot be empty"),
@@ -54,114 +36,105 @@ const Addreceipt = () => {
     location:z.string().min(1, "Location cannot be empty"),
     quantity:z.number().positive("Quantity should be a positive number")
   })
-
+const Addreceipt = () => {
+  const [referencenumber, setReferenceNumber] = useState("");
+  const [invoicenumber, setInvoiceNumber] = useState("");
+  const [invoicedate, setInvoiceDate] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [receiptItems, setReceiptItems] = useState([
+    {
+      itemid: "",
+      itemname: "",
+      partnumber: "",
+      location: "",
+      quantity: 0,
+      oldquantity: 0,
+    },
+  ])
+  const [error, setError] = useState("");
   const [fetchedItems, setItems] = useState<any>([]);
   const [fetchedSupplier, setFetchedSupplier] = useState<any>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  const to = new Date();
-  const day = String(to.getDate()).padStart(2, "0");
-  const month = String(to.getMonth() + 1).padStart(2, "0");
-  const year = to.getFullYear();
-  const today = `${day}/${month}/${year}`;
-
-  const prefix = Math.random().toString();
-  const newT = prefix.slice(14, 17);
+  const today = new Date().toLocaleDateString("en-GB")
+  const newT = Math.random().toString().slice(2, 5)
 
   async function onSubmit() {
-    var newq = oldquantity + quantity;
+    setIsSubmitting(true);
 
-    let valuedate = today;
     let transtype = "R";
     let transcode = `R${newT}`
-    let newquantity = newq;
 
-    let name = itemname
-    let prevQuantity = oldquantity
-    let addedQuantity = quantity
-    let newQuantity = newq
-
-    setIsSubmitting(true);
-    const result = receiptSchema.safeParse({
-      referencenumber:referencenumber,
-      valuedate:valuedate,
-      invoicedate:invoicedate,
-      invoicenumber:invoicenumber,
-      transtype:transtype,
-      transcode:transcode,
-      supplier:supplier,
-      remarks:remarks,
-      itemname:itemname,
-      partnumber:partnumber,
-      location:location,
-      quantity:quantity
-    })
-    if(!result.success){
-      setError(
-      result.error.format().referencenumber?._errors[0] ||
-      result.error.format().valuedate?._errors[0] ||
-      result.error.format().invoicedate?._errors[0] ||
-      result.error.format().invoicenumber?._errors[0] ||
-      result.error.format().transtype?._errors[0] ||
-      result.error.format().transcode?._errors[0] ||
-      result.error.format().supplier?._errors[0] ||
-      result.error.format().remarks?._errors[0] ||
-      result.error.format().itemname?._errors[0] ||
-      result.error.format().partnumber?._errors[0] ||
-      result.error.format().location?._errors[0] ||
-      result.error.format().quantity?._errors[0] ||
-      "Invalid Input");
-      setIsSubmitting(false)
-      return
-    }
-    try {
-      const response = await fetch("http://localhost:8000/api/v1/receipt/add-receipt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          referencenumber,
-          valuedate,
-          invoicenumber,
-          invoicedate,
-          transtype,
-          transcode,
-          supplier,
-          remarks,
-          itemname,
-          partnumber,
-          location,
-          quantity,
-        }),
-      });
-      await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${itemname}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ newquantity }),
-      });
-       await fetch('http://localhost:8000/api/v1/stock/addStockhistory', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({name,prevQuantity,addedQuantity,newQuantity}),
+    for (let item of receiptItems) {
+      const result = receiptSchema.safeParse({
+        referencenumber,
+        valuedate: today,
+        invoicedate,
+        invoicenumber,
+        transtype,
+        transcode,
+        supplier,
+        remarks,
+        itemname: item.itemname,
+        partnumber: item.partnumber,
+        location: item.location,
+        quantity: item.quantity,
       })
-      if (!response.ok) {
-        const error = await response.json();
-        console.log(error);
-        throw new Error(error.message || "Failed to create new receipt");
-      }
 
-      toast.success("Success! New Receipt has been created.");
-    } catch (error) {
-      toast.error(`Error: ${error}`);
+      if (!result.success) {
+        setError("Validation failed for one or more items.")
+        setIsSubmitting(false)
+        return
+      }
+    }
+        try {
+      for (let item of receiptItems) {
+        const newquantity = item.oldquantity - item.quantity
+
+        await fetch("http://localhost:8000/api/v1/receipt/add-receipt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            referencenumber,
+            valuedate: today,
+            invoicedate,
+            invoicenumber,
+            transtype,
+            transcode,
+            supplier,
+            remarks,
+            itemname: item.itemname,
+            partnumber: item.partnumber,
+            location: item.location,
+            quantity: item.quantity,
+          }),
+        })
+
+        await fetch(`http://localhost:8000/api/v1/stock/updateQuantity/${item.itemname}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ newquantity }),
+        })
+
+        await fetch("http://localhost:8000/api/v1/stock/addStockhistory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: item.itemname,
+            prevQuantity: item.oldquantity,
+            addedQuantity: item.quantity,
+            newQuantity: newquantity,
+          }),
+        })
+      }
+      toast.success("Success! All Receipt created.")
+    } catch (e) {
+      toast.error(`Error while submitting: ${e}`)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
   const fetchItems = async () => {
@@ -176,20 +149,36 @@ const Addreceipt = () => {
 
     setFetching(false);
   };
-  const handleItemChange = (e: any) => {
-    const selectedId = e.target.value;
-    const selectedItem = fetchedItems.find(
-      (item: any) => item.id == selectedId
-    );
 
-    if (selectedItem) {
-      setItemid(selectedItem.id);
-      setOldQuantity(selectedItem.quantity);
-      setItemname(selectedItem.name);
-      setPartNumber(selectedItem.partnumber);
-      setLocation(selectedItem.location);
+    const handleItemChange = (index, itemId) => {
+    const selectedItem = fetchedItems.find((itm) => itm.id == itemId)
+    if (!selectedItem) return
+    const updated = [...receiptItems]
+    updated[index] = {
+      ...updated[index],
+      itemid: selectedItem.id,
+      itemname: selectedItem.name,
+      partnumber: selectedItem.partnumber,
+      location: selectedItem.location,
+      oldquantity: selectedItem.quantity,
     }
-  };
+    setReceiptItems(updated)
+  }
+    const handleItemQuantityChange = (index, value) => {
+    const updated = [...receiptItems]
+    updated[index].quantity = Number(value)
+    setReceiptItems(updated)
+  }
+    const addNewItem = () => {
+    setReceiptItems([
+      ...receiptItems,
+      { itemid: "", itemname: "", partnumber: "", location: "", quantity: 0, oldquantity: 0 },
+    ])
+  }
+    const removeItem = (index) => {
+    const updated = receiptItems.filter((_, i) => i !== index)
+    setReceiptItems(updated)
+  }
   useEffect(() => {
     fetchItems();
   }, []);
@@ -224,7 +213,6 @@ const Addreceipt = () => {
             </Label>
             <Input
               id="date"
-              onChange={(e) => setValueDate(today)}
               value={today}
               className="col-span-3"
               disabled
@@ -311,69 +299,40 @@ const Addreceipt = () => {
               className="col-span-3"
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
-            {fetching ? (
-              <Loader className="h-4 w-full text-center animate-spin" />
-            ) : (
-              <>
-                <div className="flex gap-4 flex-1/3">
-                  <Label htmlFor="item" className="text-right">
-                    Item Name
-                  </Label>
-                  <select
-                    id="item"
-                    onChange={handleItemChange}
-                    className="col-span-3 border rounded px-2 py-1"
-                  >
-                    <option value="">Select an item</option>
-                    {fetchedItems.map((item: any) => (
-                      <option key={item.id} value={item.id}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="flex gap-4 flex-1/3">
-                  <Label htmlFor="partnumber" className="text-right">
-                    Partnumber
-                  </Label>
-                  <Input
-                    id="partnumber"
-                    placeholder="Part Number"
-                    type="text"
-                    value={partnumber}
-                    onChange={(e) => setPartNumber(e.target.value)}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="flex gap-4 flex-1/3">
-                  <Label htmlFor="location" className="text-right">
-                    Location
-                  </Label>
-                  <Input
-                    id="location"
-                    placeholder="Location"
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    className="col-span-3"
-                  />
-                </div>
-              </>
-            )}
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4 ">
-            <Label htmlFor="quantities" className="text-right">
-              Quantities
-            </Label>
-            <Input
-              id="quantities"
-              placeholder="Quantities"
-              type="number"
-              onChange={(e) => setQuantity(+e.target.value)}
-              className="col-span-3"
-            />
-          </div>
+            {receiptItems.map((item, index) => (
+            <div key={index} className="grid grid-cols-6 gap-2 items-center">
+              <select
+                className="col-span-2 border rounded px-2 py-1"
+                value={item.itemid}
+                onChange={(e) => handleItemChange(index, e.target.value)}
+              >
+                <option value="">Select Item</option>
+                {fetchedItems.map((itm) => (
+                  <option key={itm.id} value={itm.id}>
+                    {itm.name}
+                  </option>
+                ))}
+              </select>
+              <Input value={item.partnumber} disabled className="col-span-1" />
+              <Input value={item.location} disabled className="col-span-1" />
+              <Input
+                type="number"
+                className="col-span-1"
+                value={item.quantity}
+                onChange={(e) => handleItemQuantityChange(index, e.target.value)}
+              />
+              {receiptItems.length > 1 && (
+                <Button variant="ghost" onClick={() => removeItem(index)}>
+                  Remove
+                </Button>
+              )}
+            </div>
+          ))}
+
+          <Button type="button" onClick={addNewItem} className="w-fit mt-2">
+            + Add Another Item
+          </Button>
+          
            {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
         </div>
         <DialogFooter>
