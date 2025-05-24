@@ -69,8 +69,8 @@ const Receiptcorrection = () => {
   async function onUpdate() {
     setIsUpdating(true);
     let invoicenumber = newinvoicenumber || searchedData.invoicenumber;
-    let transtype = newtranstype || searchedData.transtype;
-    let transcode = newtranscode || searchedData.transcode;
+    let transtype = searchedData.transtype;
+    let transcode =  searchedData.transcode;
     let supplier = newsupplier || searchedData.supplier;
     let remarks = newremarks || searchedData.remarks;
     try {
@@ -192,7 +192,7 @@ const Receiptcorrection = () => {
                   placeholder="Trans Type"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transtype}
-                  onChange={(e) => setNewtranstype(e.target.value)}
+                  disabled
                 />
               </div>
               <div className="flex gap-2 w-1/2">
@@ -201,7 +201,7 @@ const Receiptcorrection = () => {
                   placeholder="Trans Code"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transcode}
-                  onChange={(e) => setNewtranscode(e.target.value)}
+                  disabled
                 />
               </div>
             </div>

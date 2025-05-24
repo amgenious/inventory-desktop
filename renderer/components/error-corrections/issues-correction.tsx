@@ -68,8 +68,8 @@ const Issuescorrection = () => {
   }
   async function onUpdate() {
     setIsUpdating(true);
-    let transtype = newtranstype || searchedData.transtype;
-    let transcode = newtranscode || searchedData.transcode;
+    let transtype =  searchedData.transtype;
+    let transcode =  searchedData.transcode;
     let customer = newcustomer || searchedData.customer;
     let remarks = newremarks || searchedData.remarks;
     try {
@@ -166,7 +166,7 @@ const Issuescorrection = () => {
                   placeholder="Trans Type"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transtype}
-                  onChange={(e) => setNewtranstype(e.target.value)}
+                  disabled
                 />
               </div>
               <div className="flex gap-2 w-1/2">
@@ -175,7 +175,7 @@ const Issuescorrection = () => {
                   placeholder="Trans Code"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   defaultValue={searchedData.transcode}
-                  onChange={(e) => setNewtranscode(e.target.value)}
+                  disabled
                 />
               </div>
             </div>
