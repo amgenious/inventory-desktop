@@ -346,9 +346,9 @@ function DeleteButton ({item}: {item:any}) {
             </Button>
           </DropdownMenuTrigger>
           {
-             user?.role === 'admin' &&  <DropdownMenuContent align="end">
+             user?.role === 'admin' ?(<DropdownMenuContent align="end">
               <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
-              </DropdownMenuContent>
+              </DropdownMenuContent>):(<></>) 
             }
       </DropdownMenu>
   )
