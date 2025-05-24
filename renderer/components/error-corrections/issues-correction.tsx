@@ -27,9 +27,7 @@ const Issuescorrection = () => {
   const [query, setQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
-  const [searched, setSearched] = useState("");
-  const [newtranstype, setNewtranstype] = useState("");
-  const [newtranscode, setNewtranscode] = useState("");
+  const [searched, setSearched] = useState([]);
   const [newcustomer, setNewcustomer] = useState("");
   const [newremarks, setNewremarks] = useState("");
   const [fetchedCustomer, setFetchedCustomer] = useState<any>([]);
@@ -46,7 +44,10 @@ const Issuescorrection = () => {
 
     const response = await fetch("http://localhost:8000/api/v1/issue/")
     const data = await response.json()
-    setIssue(data.issues)
+    const uniqueIssues = Array.from(
+  new Map(data.issues.map(item => [item.referencenumber, item])).values()
+);
+    setIssue(uniqueIssues)
 
     setFetching(false);
   };
@@ -139,14 +140,15 @@ const Issuescorrection = () => {
             </Button>
           </div>
         </div>
-        {searched ? (
-          <div className="p-5 border-[1px] rounded-md w-full">
+        {searched && searchedData.length > 0 ? (
+            searchedData.map((item: any, index: number) => (
+          <div className="p-5 border-[1px] rounded-md w-full" key={index}>
             <div className="flex gap-10 w-full">
               <div className="flex gap-5 w-1/2">
                 <Label className="text-black">Reference Number</Label>
                 <Input
                   placeholder="ref.number"
-                  value={searchedData.referencenumber}
+                  value={item.referencenumber}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -155,7 +157,7 @@ const Issuescorrection = () => {
                 <Label className="text-black">Value Date</Label>
                 <Input
                   placeholder="value date"
-                  value={searchedData.valuedate}
+                  value={item.valuedate}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -167,7 +169,7 @@ const Issuescorrection = () => {
                 <Input
                   placeholder="Trans Type"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.transtype}
+                  defaultValue={item.transtype}
                   disabled
                 />
               </div>
@@ -176,7 +178,7 @@ const Issuescorrection = () => {
                 <Input
                   placeholder="Trans Code"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.transcode}
+                  defaultValue={item.transcode}
                   disabled
                 />
               </div>
@@ -190,7 +192,7 @@ const Issuescorrection = () => {
                   <Select
                     onValueChange={setNewcustomer}
                     value={newcustomer}
-                    defaultValue={searchedData.customer}
+                    defaultValue={item.customer}
                   >
                     <SelectTrigger id="customer" className="w-full border-none dark:bg-white dark:text-black">
                       <SelectValue placeholder="Select Customer" />
@@ -210,7 +212,7 @@ const Issuescorrection = () => {
                 <Input
                   placeholder="Remarks"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.remarks}
+                  defaultValue={item.remarks}
                   onChange={(e) => setNewremarks(e.target.value)}
                 />
               </div>
@@ -227,13 +229,13 @@ const Issuescorrection = () => {
                 <TableBody>
                   <TableRow>
                     <TableCell className="text-muted">
-                      {searchedData.itemname}
+                      {item.itemname}
                     </TableCell>
                     <TableCell className="text-muted">
-                      {searchedData.partnumber}
+                      {item.partnumber}
                     </TableCell>
                     <TableCell className="text-muted">
-                      {searchedData.location}
+                      {item.location}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -243,7 +245,7 @@ const Issuescorrection = () => {
                 <Input
                   placeholder="quantity"
                   type="number"
-                  value={searchedData.quantity}
+                  value={item.quantity}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -266,7 +268,7 @@ const Issuescorrection = () => {
             </Button>
             }
           </div>
-        ) : (
+        ))) : (
           <div className=" w-full text-center italic">
             <p>Search for an issue</p>
           </div>

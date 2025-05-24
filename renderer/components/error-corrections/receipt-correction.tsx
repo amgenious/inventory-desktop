@@ -27,10 +27,8 @@ const Receiptcorrection = () => {
   const [query, setQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
-  const [searched, setSearched] = useState("");
+  const [searched, setSearched] = useState([]);
   const [newinvoicenumber, setNewinvoicenumber] = useState("");
-  const [newtranstype, setNewtranstype] = useState("");
-  const [newtranscode, setNewtranscode] = useState("");
   const [newsupplier, setNewsupplier] = useState("");
   const [newremarks, setNewremarks] = useState("");
   const [fetchedSupplier, setFetchedSupplier] = useState<any>([]);
@@ -47,7 +45,10 @@ const Receiptcorrection = () => {
 
     const response = await fetch("http://localhost:8000/api/v1/receipt/")
     const data = await response.json()
-    setReceipt(data.receipt)
+        const uniqueReceipt = Array.from(
+  new Map(data.receipt.map(item => [item.referencenumber, item])).values()
+);
+    setReceipt(uniqueReceipt)
     setFetching(false);
   };
 
@@ -145,14 +146,15 @@ const Receiptcorrection = () => {
             </Button>
           </div>
         </div>
-        {searched ? (
-          <div className="p-5 border-[1px] rounded-md w-full">
+        {searched && searchedData.length > 0 ? (
+           searchedData.map((item: any, index: number) => (
+          <div className="p-5 border-[1px] rounded-md w-full" key={index}>
             <div className="flex gap-10 w-full">
               <div className="flex gap-5 w-1/2">
                 <Label className="text-black">Reference Number</Label>
                 <Input
                   placeholder="ref.number"
-                  defaultValue={searchedData.referencenumber}
+                  defaultValue={item.referencenumber}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -161,7 +163,7 @@ const Receiptcorrection = () => {
                 <Label className="text-black">Value Date</Label>
                 <Input
                   placeholder="value date"
-                  defaultValue={searchedData.valuedate}
+                  defaultValue={item.valuedate}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -172,7 +174,7 @@ const Receiptcorrection = () => {
                 <Label className="text-black">Invoice Number</Label>
                 <Input
                   placeholder="invoice number"
-                  defaultValue={searchedData.invoicenumber}
+                  defaultValue={item.invoicenumber}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   onChange={(e) => setNewinvoicenumber(e.target.value)}
                 />
@@ -181,7 +183,7 @@ const Receiptcorrection = () => {
                 <Label className="text-black">Invoice Date</Label>
                 <Input
                   placeholder="Invoice date"
-                  defaultValue={searchedData.invoicedate}
+                  defaultValue={item.invoicedate}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -193,7 +195,7 @@ const Receiptcorrection = () => {
                 <Input
                   placeholder="Trans Type"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.transtype}
+                  defaultValue={item.transtype}
                   disabled
                 />
               </div>
@@ -202,7 +204,7 @@ const Receiptcorrection = () => {
                 <Input
                   placeholder="Trans Code"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.transcode}
+                  defaultValue={item.transcode}
                   disabled
                 />
               </div>
@@ -216,7 +218,7 @@ const Receiptcorrection = () => {
                   <Select
                     onValueChange={setNewsupplier}
                     value={newsupplier}
-                    defaultValue={searchedData.supplier}
+                    defaultValue={item.supplier}
                   >
                     <SelectTrigger id="supplier" className="w-full border-none placeholder:text-black dark:bg-white dark:text-black">
                       <SelectValue placeholder="Select Supplier" />
@@ -236,7 +238,7 @@ const Receiptcorrection = () => {
                 <Input
                   placeholder="Remarks"
                   className="w-3/4 border-none dark:bg-white dark:text-black"
-                  defaultValue={searchedData.remarks}
+                  defaultValue={item.remarks}
                   onChange={(e) => setNewremarks(e.target.value)}
                 />
               </div>
@@ -253,13 +255,13 @@ const Receiptcorrection = () => {
                 <TableBody>
                   <TableRow>
                     <TableCell className="text-muted">
-                      {searchedData.itemname}
+                      {item.itemname}
                     </TableCell>
                     <TableCell className="text-muted">
-                      {searchedData.partnumber}
+                      {item.partnumber}
                     </TableCell>
                     <TableCell className="text-muted">
-                      {searchedData.location}
+                      {item.location}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -269,7 +271,7 @@ const Receiptcorrection = () => {
                 <Input
                   placeholder="quantity"
                   type="number"
-                  value={searchedData.quantity}
+                  value={item.quantity}
                   className="w-3/4 border-none dark:bg-white dark:text-black"
                   disabled
                 />
@@ -293,7 +295,7 @@ const Receiptcorrection = () => {
             }
 
           </div>
-        ) : (
+        ))) : (
           <div className=" w-full text-center italic">
             <p>Search for a Receipt</p>
           </div>
