@@ -61,7 +61,7 @@ const data = {
       icon:SearchCheckIcon,
     },
     {
-      title:"Settings",
+      title:"Profile",
       url:"/dashboard/settings/",
       icon:Settings2
     },
