@@ -11,12 +11,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, PlusCircle } from "lucide-react";
+import { Loader2, PlusCircle, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 
 const Addsupplier = () => {
+  const [openModal, setOpenModal] = useState(false)
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
@@ -28,6 +29,12 @@ const Addsupplier = () => {
     contact: z.string().min(1, "Supplier contact cannot be empty"),
     address: z.string().min(1, "Supplier address cannot be empty"),
   });
+    const handleOpenModal = () =>{
+       setOpenModal(true)
+    }
+    const handleCloseModal = () =>{
+      setOpenModal(false)
+    } 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit() {
@@ -61,19 +68,21 @@ const Addsupplier = () => {
     }
   }
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default">
-          <PlusCircle className="w-6 mr-2"/> Add Supplier
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add Supplier</DialogTitle>
-          <DialogDescription>
+    <>
+       <Button variant="default" onClick={handleOpenModal}><PlusCircle className="w-6 mr-2"/> Add Supplier</Button>
+       {
+        openModal ? (
+          <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
+      <div className="w-[50%] bg-background rounded-lg border p-6 shadow-lg">
+        <section>
+          <div className="flex justify-between">
+          <header>Add Supplier</header>
+          <X className="cursor-pointer" onClick={handleCloseModal}/>
+          </div>
+          <p className="text-sm">
             Add New Supplier here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </section>
         <div className="flex flex-col gap-4 py-4">
           <div className="flex items-center gap-4">
             <Label htmlFor="name">Supplier Name</Label>
@@ -116,7 +125,7 @@ const Addsupplier = () => {
           </div>
           {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
         </div>
-        <DialogFooter>
+        <section>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit}>
             {isSubmitting ? (
               <>
@@ -127,9 +136,12 @@ const Addsupplier = () => {
               "Add Supplier"
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </section>
+      </div>
+      </div>
+        ):(<></>)
+       }
+    </>
   );
 };
 

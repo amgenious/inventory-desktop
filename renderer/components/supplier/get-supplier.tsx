@@ -146,6 +146,11 @@ const Getsupplier = () => {
             setSupplier(data.supplier)
             setLoading(false)
           }
+          const fetchASupplier = async () => {
+            const response = await fetch("http://localhost:8000/api/v1/supplier")
+            const data = await response.json()
+            setSupplier(data.supplier)
+          }
          const [sorting, setSorting] = React.useState<SortingState>([])
               const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
                 []
@@ -175,6 +180,12 @@ const Getsupplier = () => {
               React.useEffect(() => {
                   fetchSupplier()
                 }, [])
+              React.useEffect(() => {
+                const interval = setInterval(() => {
+                  fetchASupplier()
+                },3000)
+                return () => clearInterval(interval)
+              },[])  
   return (
     <div className="w-full">
                <div className="flex items-center py-4">
@@ -192,7 +203,7 @@ const Getsupplier = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>
