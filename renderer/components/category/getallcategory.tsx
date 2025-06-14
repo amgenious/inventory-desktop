@@ -106,13 +106,19 @@ export const columns: ColumnDef<Category>[] = [
 
 export function Getallcategory() {
     const [category, setCategory] = React.useState<Category[]>([])
-    const [loading, setLoading] = React.useState(true)
+    const [loading, setLoading] = React.useState(false)
+
     const fetchCategory = async () => {
       setLoading(true)
       const response = await fetch("http://localhost:8000/api/v1/category")
       const data = await response.json()
       setCategory(data.categories)
       setLoading(false)
+    }
+    const fetchACategory = async () => {
+      const response = await fetch("http://localhost:8000/api/v1/category")
+      const data = await response.json()
+      setCategory(data.categories)
     }
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -141,8 +147,13 @@ export function Getallcategory() {
     },
   })
 React.useEffect(() => {
-    fetchCategory()
-    
+    fetchCategory();
+  }, [])
+React.useEffect(() => {
+  const interval = setInterval(()=>{
+    fetchACategory();
+  },3000)
+  return () => clearInterval(interval);
   }, [])
   return (
     <div className="w-full">
@@ -161,7 +172,7 @@ React.useEffect(() => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>
