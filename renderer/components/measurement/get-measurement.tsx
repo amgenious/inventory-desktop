@@ -105,6 +105,11 @@ const Getmeasurement = () => {
         setMeasurement(data.measurement)
         setLoading(false)
       }
+      const fetchAMeasurement = async () => {
+        const response = await fetch("http://localhost:8000/api/v1/measurement")
+        const data = await response.json()
+        setMeasurement(data.measurement)
+      }
 
     const [sorting, setSorting] = React.useState<SortingState>([])
           const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -135,6 +140,12 @@ const Getmeasurement = () => {
           React.useEffect(()=>{
             fetchMeasurement()
           },[])
+          React.useEffect(() => {
+            const interval = setInterval(()=>{
+              fetchAMeasurement();
+            },3000)
+            return () => clearInterval(interval);
+            }, [])
   return (
     <div className="w-full">
            <div className="flex items-center py-4">
@@ -152,7 +163,7 @@ const Getmeasurement = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>
