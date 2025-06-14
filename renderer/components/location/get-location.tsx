@@ -98,10 +98,17 @@ const Getlocation = () => {
   const [loading, setLoading] = React.useState(false)
 
   const fetchLocations = async () => {
+    setLoading(true)
     const response = await fetch("http://localhost:8000/api/v1/location")
     const data = await response.json()
     setLocations(data.location)
- 
+    setLoading(false)
+  }
+
+  const fetchALocations = async () => {
+    const response = await fetch("http://localhost:8000/api/v1/location")
+    const data = await response.json()
+    setLocations(data.location)
   }
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -128,9 +135,12 @@ const Getlocation = () => {
     },
   })
 React.useEffect(() => {
+    fetchLocations()
+}, []);
+React.useEffect(() => {
   const interval = setInterval(() => {
-    fetchLocations();
-  }, 4000); // fetch every 5 seconds
+    fetchALocations();
+  }, 3000); // fetch every 5 seconds
 
   return () => clearInterval(interval); // cleanup on unmount
 }, []);
