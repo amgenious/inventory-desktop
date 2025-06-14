@@ -208,6 +208,11 @@ const Getallstock = () => {
           setStock(data.stock)
           setLoading(false)
         }
+        const fetchAStock = async () => {
+          const response = await fetch("http://localhost:8000/api/v1/stock")
+          const data = await response.json()
+          setStock(data.stock)
+        }
 
      const [sorting, setSorting] = React.useState<SortingState>([])
       const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -236,8 +241,14 @@ const Getallstock = () => {
         },
       })
         React.useEffect(() => {
-                    fetchStock()
-                  }, [])
+          fetchStock()
+        }, [])
+        React.useEffect(() => {
+          const interval = setInterval(()=> {
+            fetchAStock()
+          }, 3000)
+          return () => clearInterval(interval)
+        }, [])
   return (
     <div className="w-full">
          <div className="flex items-center py-4">
@@ -255,7 +266,7 @@ const Getallstock = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>

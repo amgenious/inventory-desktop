@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, PlusCircle } from "lucide-react"
+import { Loader2, PlusCircle, X } from "lucide-react"
 import { useState,useEffect } from "react"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import {z} from "zod"
 
 const Addstock = () => {
+    const [openModal, setOpenModal] = useState(false)
     const [name, setInventoryName] = useState("")
     const [partnumber, setPartnumber] = useState("")
     const [location, setLocation] = useState("")
@@ -34,12 +35,14 @@ const Addstock = () => {
       description: z.string().min(5, "Stock description cannot be empty"),
       location: z.string().min(1, "Stock location cannot be empty"),
       category: z.string().min(5, "Stock category cannot be empty"),
-      max_stock: z.number().positive("Stock max stock cannot be empty"),
-      min_stock: z.number().positive("Stock min stock cannot be empty"),
-      price: z.number().positive("Stock price cannot be empty"),
       partnumber: z.string().min(1, "Stock partnumber cannot be empty"),
     });
-
+    const handleOpenModal = () =>{
+       setOpenModal(true)
+    }
+    const handleCloseModal = () =>{
+      setOpenModal(false)
+    } 
     const [fetchedLocations, setFetchedLocations] = useState([])
     const [fetchedCategory, setFetchedCategory] = useState([])
     const [fetchedMeasurement, setFetchedMeasurement] = useState([])
@@ -85,9 +88,6 @@ const Addstock = () => {
               result.error.format().category?._errors[0] || 
               result.error.format().location?._errors[0] || 
               result.error.format().partnumber?._errors[0] || 
-              result.error.format().max_stock?._errors[0] || 
-              result.error.format().min_stock?._errors[0] || 
-              result.error.format().price?._errors[0] || 
               "Invalid input");
             setIsSubmitting(false)
             return;
@@ -110,6 +110,7 @@ const Addstock = () => {
             toast.success(
                "Success! New Stock has been created.",
             )
+            setOpenModal(false)
           } catch (error) {
             toast.error(
                `Failed to create new stock, Error: ${error}`
@@ -122,17 +123,21 @@ const Addstock = () => {
           fetchParams()
         }, [])
   return (
-    <Dialog>
-    <DialogTrigger asChild>
-      <Button variant="default"><PlusCircle  className="w-6 mr-2"/> Add Stock</Button>
-    </DialogTrigger>
-    <DialogContent className="sm:max-w-[425px] md:max-w-[700px]">
-      <DialogHeader>
-        <DialogTitle>Add Stock</DialogTitle>
-        <DialogDescription>
+    <>
+    <Button variant="default" onClick={handleOpenModal}><PlusCircle  className="w-6 mr-2"/> Add Stock</Button>
+    {
+      openModal ? (
+        <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
+          <div className="w-[50%] bg-background rounded-lg border p-6 shadow-lg">
+      <section>
+        <div className="flex justify-between">
+        <header>Add Stock</header>
+        <X className="cursor-pointer" onClick={handleCloseModal}/>
+        </div>
+        <p className="text-sm">
           Add New Stock here. Click save when you're done.
-        </DialogDescription>
-      </DialogHeader>
+        </p>
+      </section>
       <div className="flex flex-col gap-4 py-4">
         <div className="flex items-center gap-4">
           <Label htmlFor="name">
@@ -250,7 +255,7 @@ const Addstock = () => {
         </div>
         {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
       </div>
-      <DialogFooter>
+      <section>
         <Button type="submit" disabled={isSubmitting} onClick={onSubmit} className="cursor-pointer">
         {isSubmitting ? (
             <>
@@ -261,9 +266,12 @@ const Addstock = () => {
             "Add Stock"
           )}
           </Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      </section>
+    </div>
+        </div>
+      ):(<></>)
+    }
+    </>
   )
 }
 
