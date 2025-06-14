@@ -36,7 +36,7 @@ const UploadissuecsvPage = () => {
         formData.append("file", file);
     
         try {
-          const res = await axios.post('http://localhost:8000/api/v1/issue/add-issuexlsx', formData)
+        const res = await axios.post('http://localhost:8000/api/v1/issue/add-issuexlsx', formData)
         toast.success(
             "Success! New Stock has been created.",
          )

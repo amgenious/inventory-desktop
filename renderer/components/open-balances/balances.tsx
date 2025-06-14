@@ -52,6 +52,13 @@ const BalancesPage = () => {
     setPreStoredData(data.openbalance);
     setFetching(false);
   };
+  const fetchOpenedAItems = async () => {
+    const response = await fetch(
+      "http://localhost:8000/api/v1/stock/getAllOpenBalance/"
+    );
+    const data = await response.json();
+    setPreStoredData(data.openbalance);
+  };
   const addPreStoredData = async () => {
     let prevQuantity = 0;
     let addedQuantity = quantity;
@@ -136,6 +143,12 @@ const BalancesPage = () => {
     fetchItems();
     fetchOpenedItems();
   }, []);
+  useEffect(()=>{
+    const interval = setInterval(()=>{
+      fetchOpenedAItems()
+    },3000)
+    return ()=>clearInterval(interval)
+  },[])
   return (
     <div className="px-4 lg:px-6">
       <div className="flex gap-5 justify-between py-5">
