@@ -20,6 +20,24 @@ const TemplatesPage = () => {
             </div>
         </div>
         <Separator className='mt-1'/>
+        <div className='flex justify-between mt-5'>
+            <div><p className='text-muted italic'>Issues Upload Template</p></div>
+            <div className='cursor-pointer'>
+                <a  href="/issue-template.xlsx" download="issue-template.xlsx">
+                <Button>Download</Button>
+                </a>
+            </div>
+        </div>
+        <Separator className='mt-1'/>
+        <div className='flex justify-between mt-5'>
+            <div><p className='text-muted italic'>Receipts Upload Template</p></div>
+            <div>
+                <a  href="/receipt-template.xlsx" download="receipt-template.xlsx">
+                <Button>Download</Button>
+                </a>
+            </div>
+        </div>
+        <Separator className='mt-1'/>
     </div>
     </Layout>
   )
