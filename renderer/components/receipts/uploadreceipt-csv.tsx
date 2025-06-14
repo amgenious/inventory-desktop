@@ -1,4 +1,3 @@
-"use client"
 import React,{useState} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,8 +7,8 @@ import { IconFileExcel } from '@tabler/icons-react'
 import { Loader2, X } from 'lucide-react'
 import axios from 'axios'
 
-const UploadstockcsvPage = () => {
-  const [openModal, setOpenModal] = useState(false)
+const UploadreceiptcsvPage = () => {
+     const [openModal, setOpenModal] = useState(false)
     const [file, setFile] = useState(null);
     const [message, setMessage] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -37,7 +36,7 @@ const UploadstockcsvPage = () => {
         formData.append("file", file);
     
         try {
-          const res = await axios.post('http://localhost:8000/api/v1/stock/add-stockxlsx', formData)
+          const res = await axios.post('http://localhost:8000/api/v1/receipt/add-receiptxlsx', formData)
         toast.success(
             "Success! New Stock has been created.",
          )
@@ -54,7 +53,7 @@ const UploadstockcsvPage = () => {
       };
   return (
     <>
-      <Button variant="default" onClick={handleOpenModal}><IconFileExcel  className="w-6 mr-2"/> Upload XLSX (Excel)</Button>
+    <Button variant="default" onClick={handleOpenModal}><IconFileExcel  className="w-6 mr-2"/> Upload XLSX (Excel)</Button>
       {
         openModal ? (
       <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
@@ -65,7 +64,7 @@ const UploadstockcsvPage = () => {
         <X className='cursor-pointer' onClick={handleCloseModal}/>
         </div>
         <p className='text-sm'>
-          Add New Stock here by uploading an xlsx file
+          Add New Receipt here by uploading an xlsx file
         </p>
       </section>
       <div className="flex flex-col gap-4 py-4">
@@ -101,4 +100,4 @@ const UploadstockcsvPage = () => {
   )
 }
 
-export default UploadstockcsvPage
+export default UploadreceiptcsvPage
