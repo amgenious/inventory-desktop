@@ -133,6 +133,11 @@ const Getuser = () => {
         setUser(data.user)
         setLoading(false)
       }
+      const fetchAUser = async () => {
+        const response = await fetch("http://localhost:8000/api/v1/user/")
+        const data = await response.json()
+        setUser(data.user)
+      }
      const [sorting, setSorting] = React.useState<SortingState>([])
           const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
             []
@@ -162,11 +167,17 @@ const Getuser = () => {
           React.useEffect(() => {
               fetchUser()
             }, [])
+          React.useEffect(() => {
+            const interval = setInterval(()=>{
+              fetchAUser();
+            },3000)
+            return () => clearInterval(interval);
+            }, [])  
   return (
     <div className="w-full">
            <div className="flex items-center py-4">
              <Input
-               placeholder="Filter Locations..."
+               placeholder="Filter Users..."
                value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                onChange={(event) =>
                  table.getColumn("name")?.setFilterValue(event.target.value)
@@ -179,7 +190,7 @@ const Getuser = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>

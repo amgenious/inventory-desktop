@@ -11,14 +11,15 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, PlusCircle } from "lucide-react"
+import { Loader2, PlusCircle, X } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import {z} from "zod"
 
 const Adduser = () => {
-  const [name, setName] = useState("")
+    const [openModal, setOpenModal] = useState(false)
+    const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [pass, setPassword] = useState("")
     const [role, setRole] = useState("")
@@ -31,7 +32,13 @@ const Adduser = () => {
       pass: z.string().min(5, "User password cannot be empty"),
       role: z.string().min(1, "User role cannot be empty"),
     });    
-
+    const handleOpenModal = () =>{
+       setOpenModal(true)
+    }
+    const handleCloseModal = () =>{
+      setOpenModal(false)
+    }       
+  
     async function onSubmit() {
       setIsSubmitting(true)
       const result = userSchema.safeParse({ name: name,email:email, pass:pass,role:role });
@@ -58,6 +65,7 @@ const Adduser = () => {
         toast.success(
            "Success! New user has been created.",
         )
+        setOpenModal(false)
       } catch (error) {
         toast.error(
            `Failed to create new user, Error: ${error}`
@@ -67,17 +75,21 @@ const Adduser = () => {
       }
     }
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default"><PlusCircle className="w-6 mr-2" /> Add User</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
-          <DialogDescription>
+    <>
+     <Button variant="default" onClick={handleOpenModal}><PlusCircle className="w-6 mr-2" /> Add User</Button>
+     {
+      openModal ? (
+        <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
+      <div className="w-[50%] bg-background rounded-lg border p-6 shadow-lg">
+        <section>
+          <div className="flex justify-between">
+          <header>Add User</header>
+          <X onClick={handleCloseModal} className="cursor-pointer"/>
+          </div>
+          <p className="text-sm">
             Add New User here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </section>
         <div className="flex flex-col gap-4 py-4">
           <div className="flex items-center gap-4">
             <Label htmlFor="name">
@@ -111,7 +123,7 @@ const Adduser = () => {
               </div>
               {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
             </div>
-        <DialogFooter>
+        <section>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit} className="cursor-pointer">
           {isSubmitting ? (
             <>
@@ -122,9 +134,12 @@ const Adduser = () => {
             "Add User"
           )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </section>
+      </div>
+      </div>
+      ):(<></>)
+     }
+    </>
   )
 }
 
