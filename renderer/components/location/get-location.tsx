@@ -98,11 +98,10 @@ const Getlocation = () => {
   const [loading, setLoading] = React.useState(false)
 
   const fetchLocations = async () => {
-    setLoading(true)
     const response = await fetch("http://localhost:8000/api/v1/location")
     const data = await response.json()
     setLocations(data.location)
-    setLoading(false)
+ 
   }
 
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -128,9 +127,13 @@ const Getlocation = () => {
       rowSelection,
     },
   })
-  React.useEffect(() => {
-    fetchLocations()
-  }, [])
+React.useEffect(() => {
+  const interval = setInterval(() => {
+    fetchLocations();
+  }, 4000); // fetch every 5 seconds
+
+  return () => clearInterval(interval); // cleanup on unmount
+}, []);
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -146,7 +149,7 @@ const Getlocation = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw/> </p>
             )
           }
         </Button>
