@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader, Loader2, PlusCircle } from "lucide-react";
+import { Loader, Loader2, PlusCircle, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
@@ -22,6 +22,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import {z} from "zod"
+import { PartNumberSelector } from "../combobox";
   const receiptSchema = z.object({
     referencenumber:z.string().min(1, "Reference Number cannot be empty"),
     valuedate:z.string().min(1, "Date cannot be empty"),
@@ -34,9 +35,9 @@ import {z} from "zod"
     itemname:z.string().min(1, "Item Name cannot be empty"),
     partnumber:z.string().min(1, "Part number cannot be empty"),
     location:z.string().min(1, "Location cannot be empty"),
-    quantity:z.number().positive("Quantity should be a positive number")
   })
 const Addreceipt = () => {
+  const [openModal, setOpenModal] = useState(false)
   const [referencenumber, setReferenceNumber] = useState("");
   const [invoicenumber, setInvoiceNumber] = useState("");
   const [invoicedate, setInvoiceDate] = useState("");
@@ -61,6 +62,13 @@ const Addreceipt = () => {
 
   const today = new Date().toLocaleDateString("en-GB")
   const newT = Math.random().toString().slice(2, 5)
+
+  const handleOpenModal = () =>{
+    setOpenModal(true)
+  }
+  const handleCloseModal = () =>{
+    setOpenModal(false)
+  } 
 
   async function onSubmit() {
     setIsSubmitting(true);
@@ -131,6 +139,7 @@ const Addreceipt = () => {
         })
       }
       toast.success("Success! All Receipt created.")
+      setOpenModal(false)
     } catch (e) {
       toast.error(`Error while submitting: ${e}`)
     } finally {
@@ -183,19 +192,21 @@ const Addreceipt = () => {
     fetchItems();
   }, []);
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default">
-          <PlusCircle className="w-6 mr-2" /> Add Receipt
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle>Add Receipt</DialogTitle>
-          <DialogDescription>
+    <>
+     <Button variant="default" onClick={handleOpenModal}><PlusCircle className="w-6 mr-2" /> Add Receipt</Button>
+     {
+      openModal ? (
+        <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
+        <div className="w-[50%] bg-background rounded-lg border p-6 shadow-lg">
+        <section>
+          <div className="flex justify-between">
+          <header>Add Receipt</header>
+          <X onClick={handleCloseModal} className="cursor-pointer"/>
+          </div>
+          <p className="text-sm">
             Add New Receipt here. Click save when you're done.
-          </DialogDescription>
-        </DialogHeader>
+          </p>
+        </section>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="referencenumber" className="text-right">
@@ -244,28 +255,6 @@ const Addreceipt = () => {
               />
             </div>
           </div>
-          {/* <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="transtype" className="text-right">
-              Trans Type
-            </Label>
-            <Input
-              id="transtype"
-              placeholder="Trans Type"
-              onChange={(e) => setTranstype(e.target.value)}
-              className="col-span-3"
-            />
-          </div> */}
-          {/* <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="transcode" className="text-right">
-              Trans Code
-            </Label>
-            <Input
-              id="transcode"
-              placeholder="Trans Code"
-              onChange={(e) => setTransCode(e.target.value)}
-              className="col-span-3"
-            />
-          </div> */}
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="customer" className="text-right">
               Supplier
@@ -301,19 +290,13 @@ const Addreceipt = () => {
           </div>
             {receiptItems.map((item, index) => (
             <div key={index} className="grid grid-cols-6 gap-2 items-center">
-              <select
-                className="col-span-2 border rounded px-2 py-1"
-                value={item.itemid}
-                onChange={(e) => handleItemChange(index, e.target.value)}
-              >
-                <option value="">Select Item</option>
-                {fetchedItems.map((itm) => (
-                  <option key={itm.id} value={itm.id}>
-                    {itm.name}
-                  </option>
-                ))}
-              </select>
-              <Input value={item.partnumber} disabled className="col-span-1" />
+              <PartNumberSelector 
+              item={item}
+              index = {index}
+              fetchedItems={fetchedItems}
+              handleItemChange={handleItemChange}
+              />
+              <Input value={item.itemname} disabled className="col-span-1" />
               <Input value={item.location} disabled className="col-span-1" />
               <Input
                 type="number"
@@ -322,7 +305,7 @@ const Addreceipt = () => {
                 onChange={(e) => handleItemQuantityChange(index, e.target.value)}
               />
               {receiptItems.length > 1 && (
-                <Button variant="ghost" onClick={() => removeItem(index)}>
+                <Button variant="destructive" onClick={() => removeItem(index)}>
                   Remove
                 </Button>
               )}
@@ -335,7 +318,7 @@ const Addreceipt = () => {
           
            {error && <p className="text-red-500 text-sm col-span-3 col-start-2 text-center">{error}</p>}
         </div>
-        <DialogFooter>
+        <section>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit}>
             {isSubmitting ? (
               <>
@@ -346,9 +329,12 @@ const Addreceipt = () => {
               "Save"
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </section>
+      </div>
+        </div>
+      ):(<></>)
+     }
+    </>
   );
 };
 

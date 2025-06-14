@@ -46,7 +46,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="p-4 lg:p-6 bg-gradient-to-r from-violet-200 to-blue-200 flex-1 overflow-y-auto">
           <AuthProvider>
           {children}
-          <Toaster richColors position='bottom-center'/>
+          <Toaster richColors position='top-center'/>
           </AuthProvider>
         </main>
       </div>

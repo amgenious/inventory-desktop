@@ -231,6 +231,11 @@ const Getallreceipt = () => {
       setReceipt(data.receipt)
       setLoading(false)
     }
+    const fetchAReceipt = async () => {
+      const response = await fetch("http://localhost:8000/api/v1/receipt")
+      const data = await response.json()
+      setReceipt(data.receipt)
+    }
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -257,6 +262,12 @@ const Getallreceipt = () => {
      React.useEffect(() => {
            fetchReceipt()
       }, [])            
+     React.useEffect(() => {
+      const interval = setInterval(()=>{
+          fetchAReceipt()
+      },3000)
+      return () => clearInterval(interval)
+      }, [])            
   return (
     <div className="w-full">
                 <div className="flex items-center py-4">
@@ -274,7 +285,7 @@ const Getallreceipt = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /></p>
             )
           }
         </Button>
@@ -383,7 +394,7 @@ const ReferenceCell = ({ value }: { value: string }) => {
   return (
     <div
       onClick={handleCopy}
-      className="capitalize ml-3 font-medium hover:text-blue-600 transition cursor-copy"
+      className="capitalize ml-3 font-medium transition"
       title="Click to copy"
     >
       {value} {copied && <span className="text-sm text-green-500 ml-2">Copied!</span>}

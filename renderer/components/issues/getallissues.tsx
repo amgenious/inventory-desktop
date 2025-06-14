@@ -34,7 +34,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "../ui/badge"
-import { toast } from "sonner"
 
 
 export type Issues = {
@@ -210,6 +209,11 @@ const Getallissues = () => {
     setIssue(data.issues)
     setLoading(false)
   }
+  const fetchAIssue = async () => {
+    const response = await fetch("http://localhost:8000/api/v1/issue/")
+    const data = await response.json()
+    setIssue(data.issues)
+  }
 
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
@@ -237,6 +241,12 @@ const Getallissues = () => {
     React.useEffect(() => {
          fetchIssue()
     }, [])
+    React.useEffect(() => {
+      const interval = setInterval(() => {
+        fetchAIssue()
+      }, 3000)
+      return () => clearInterval(interval)
+    }, [])
   return (
      <div className="w-full">
              <div className="flex items-center py-4">
@@ -254,7 +264,7 @@ const Getallissues = () => {
             loading ? (
               <RefreshCcw className="animate-spin"/>
             ):(
-              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> Refresh</p>
+              <p className="flex justify-center gap-2 items-center"> <RefreshCcw /> </p>
             )
           }
         </Button>
@@ -362,7 +372,7 @@ const ReferenceCell = ({ value }: { value: string }) => {
   return (
     <div
       onClick={handleCopy}
-      className="capitalize ml-3 font-medium hover:text-blue-600 transition cursor-copy"
+      className="capitalize ml-3 font-medium transition"
       title="Click to copy"
     >
       {value} {copied && <span className="text-sm text-green-500 ml-2">Copied!</span>}

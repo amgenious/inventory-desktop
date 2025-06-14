@@ -1,17 +1,8 @@
 "use client"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader, Loader2, PlusCircle } from "lucide-react"
+import { Loader, Loader2, PlusCircle, X } from "lucide-react"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import {
@@ -22,6 +13,7 @@ import {
   SelectValue,
 } from "../ui/select"
 import { z } from "zod"
+import { PartNumberSelector } from "../combobox"
 
 const issueSchema = z.object({
   referencenumber: z.string().min(1, "Reference Number cannot be empty"),
@@ -33,10 +25,10 @@ const issueSchema = z.object({
   itemname: z.string().min(1, "Item Name cannot be empty"),
   partnumber: z.string().min(1, "Part number cannot be empty"),
   location: z.string().min(1, "Location cannot be empty"),
-  quantity: z.number().positive("Quantity should be a positive number"),
 })
 
 const AddIssues = () => {
+  const [openModal, setOpenModal] = useState(false)
   const [referencenumber, setReferenceNumber] = useState("")
   const [customer, setCustomer] = useState("")
   const [remarks, setRemarks] = useState("")
@@ -58,7 +50,13 @@ const AddIssues = () => {
 
   const today = new Date().toLocaleDateString("en-GB")
   const newT = Math.random().toString().slice(2, 5)
-
+    
+  const handleOpenModal = () =>{
+    setOpenModal(true)
+  }
+  const handleCloseModal = () =>{
+    setOpenModal(false)
+  } 
   const fetchItems = async () => {
     setFetching(true)
     const itemsRes = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance/")
@@ -174,6 +172,7 @@ const AddIssues = () => {
         })
       }
       toast.success("Success! All issues created.")
+      setOpenModal(false)
     } catch (e) {
       toast.error(`Error while submitting: ${e}`)
     } finally {
@@ -182,17 +181,19 @@ const AddIssues = () => {
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default">
-          <PlusCircle className="w-6 mr-2" /> Add Issue
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle>Add Issue</DialogTitle>
-          <DialogDescription>Add new issues with one or more items.</DialogDescription>
-        </DialogHeader>
+    <>
+    <Button variant="default" onClick={handleOpenModal}><PlusCircle className="w-6 mr-2" /> Add Issue</Button>
+    {
+      openModal ? (
+        <div className="w-full h-screen flex justify-center items-center fade-in-0 fixed inset-0 z-50 bg-black/50">
+          <div className="w-[50%] bg-background rounded-lg border p-6 shadow-lg">
+        <section>
+          <div className="flex justify-between">
+          <header>Add Issue</header>
+          <X className="cursor-pointer" onClick={handleCloseModal}/>
+          </div>
+          <p className="text-sm">Add new issues with one or more items.</p>
+        </section>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="referencenumber" className="text-right">
@@ -237,20 +238,14 @@ const AddIssues = () => {
           </div>
 
           {issueItems.map((item, index) => (
-            <div key={index} className="grid grid-cols-6 gap-2 items-center">
-              <select
-                className="col-span-2 border rounded px-2 py-1"
-                value={item.itemid}
-                onChange={(e) => handleItemChange(index, e.target.value)}
-              >
-                <option value="">Select Item</option>
-                {fetchedItems.map((itm) => (
-                  <option key={itm.id} value={itm.id}>
-                    {itm.name}
-                  </option>
-                ))}
-              </select>
-              <Input value={item.partnumber} disabled className="col-span-1" />
+            <div key={index} className="grid grid-cols-5 gap-2 items-center">
+              <PartNumberSelector 
+              item={item}
+              index={index}
+              fetchedItems={fetchedItems}
+              handleItemChange={handleItemChange}
+              />
+              <Input value={item.itemname} disabled className="col-span-1" />
               <Input value={item.location} disabled className="col-span-1" />
               <Input
                 type="number"
@@ -259,7 +254,7 @@ const AddIssues = () => {
                 onChange={(e) => handleItemQuantityChange(index, e.target.value)}
               />
               {issueItems.length > 1 && (
-                <Button variant="ghost" onClick={() => removeItem(index)}>
+                <Button variant="destructive" onClick={() => removeItem(index)}>
                   Remove
                 </Button>
               )}
@@ -272,7 +267,7 @@ const AddIssues = () => {
 
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         </div>
-        <DialogFooter>
+        <section>
           <Button type="submit" disabled={isSubmitting} onClick={onSubmit}>
             {isSubmitting ? (
               <>
@@ -282,9 +277,12 @@ const AddIssues = () => {
               "Save"
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </section>
+      </div>
+      </div>
+      ):(<></>)
+    }
+    </>
   )
 }
 
