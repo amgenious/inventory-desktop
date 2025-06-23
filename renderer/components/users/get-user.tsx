@@ -145,11 +145,16 @@ const Getuser = () => {
           const [columnVisibility, setColumnVisibility] =
             React.useState<VisibilityState>({})
           const [rowSelection, setRowSelection] = React.useState({})
+          const [pagination, setPagination] = React.useState({
+                pageIndex: 0,
+                pageSize: 10,
+          })
         
           const table = useReactTable({
             data:user,
             columns,
             onSortingChange: setSorting,
+            onPaginationChange: setPagination,
             onColumnFiltersChange: setColumnFilters,
             getCoreRowModel: getCoreRowModel(),
             getPaginationRowModel: getPaginationRowModel(),
@@ -162,6 +167,7 @@ const Getuser = () => {
               columnFilters,
               columnVisibility,
               rowSelection,
+              pagination
             },
           })
           React.useEffect(() => {
@@ -278,6 +284,26 @@ const Getuser = () => {
               )
             }
            </div>
+           <div className="flex items-center justify-end space-x-2 py-4">
+                           <div className="space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => table.previousPage()}
+                              disabled={!table.getCanPreviousPage()}
+                            >
+                              Previous
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => table.nextPage()}
+                              disabled={!table.getCanNextPage()}
+                            >
+                              Next
+                            </Button>
+                          </div>
+                       </div>
          </div>
   )
 }
