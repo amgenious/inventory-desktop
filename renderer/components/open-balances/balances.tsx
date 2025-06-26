@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Loader, LoaderCircle, Plus } from "lucide-react";
+import { Loader, LoaderCircle, MoreHorizontal, Plus, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import { z } from "zod";
 import { PartNumberSelector } from "../combobox";
+import { useAuth } from "@/hooks/use-auth";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const BalancesPage = () => {
   const [fetching, setFetching] = useState(true);
@@ -166,7 +168,7 @@ const BalancesPage = () => {
                   onChange={handleItemChange}
                   className="col-span-3 border rounded px-2 py-1"
                 >
-                  <option value="">Select an item</option>
+                  <option value="" disabled>Select an item</option>
                   {fetchedItems.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
@@ -221,7 +223,7 @@ const BalancesPage = () => {
         ):(<></>)
       }
       <Separator />
-      <div className="py-5">
+      <div className="py-5 bg-white mt-5 rounded-sm">
         <Table>
           <TableHeader>
             <TableRow>
@@ -234,6 +236,9 @@ const BalancesPage = () => {
               </TableHead>
               <TableHead className="text-secondary font-bold">
                 Quantity
+              </TableHead>
+              <TableHead className="text-secondary font-bold">
+                Action
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -251,6 +256,9 @@ const BalancesPage = () => {
                   <TableCell className="text-secondary">
                     {item.quantity}
                   </TableCell>
+                  <TableCell className="text-secondary">
+                     <DeleteButton item={item}/>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -264,5 +272,43 @@ const BalancesPage = () => {
     </div>
   );
 };
-
+const handleDelete = async(id:any)=> {
+  try{
+    const response = await fetch(`http://localhost:8000/api/v1/stock/deleteopenbalance/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to deleting measurement")
+    }
+    toast.success(
+          "Success! Openbalance Item deleted.",
+        )
+  }catch(error){
+    toast.error(
+      `Failed to delete openbalance item, Error: ${error}`
+   )
+  }
+}
+function DeleteButton ({item}: {item:any}) {
+  const { user } = useAuth()    
+  return(
+    <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          {
+            user?.role === 'admin' ? (<DropdownMenuContent align="end">
+              <DropdownMenuItem className="text-red-500" onClick={()=>handleDelete(item.id)}><Trash className="text-red-500 mr-2" /> Delete</DropdownMenuItem>
+              </DropdownMenuContent>): (<></>)
+          }
+      </DropdownMenu>
+  )
+}
 export default BalancesPage;
