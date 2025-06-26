@@ -296,7 +296,7 @@ const Receiptcorrection = () => {
 
           </div>
         ))) : (
-          <div className=" w-full text-center italic">
+          <div className=" w-full text-center italic text-secondary">
             <p>Search for a Receipt</p>
           </div>
         )}

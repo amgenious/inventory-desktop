@@ -269,7 +269,7 @@ const Issuescorrection = () => {
             }
           </div>
         ))) : (
-          <div className=" w-full text-center italic">
+          <div className=" w-full text-center italic text-secondary">
             <p>Search for an issue</p>
           </div>
         )}
