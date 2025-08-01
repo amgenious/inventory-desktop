@@ -291,6 +291,7 @@ React.useEffect(() => {
 }
 
 function TableCellViewer({ item }: {item:any }) {
+  const [openSide, setOpenSide] = React.useState(false)
   const isMobile = useIsMobile()
   const [newcategory, setNewcategory] = React.useState("")
   const [newdescription, setNewdescription] = React.useState("")
@@ -312,9 +313,8 @@ function TableCellViewer({ item }: {item:any }) {
           toast.error(`Failed to update category: ${error}`)
           throw new Error(error.message || "Failed to create post")
         }
-        toast.success(
-          "Success! category has been updated",
-       )
+        toast.success("Success! category has been updated",)
+       setOpenSide(false)
       } catch (error) {
         toast.error(
            `Failed to update catgory, Error ${error}`,
@@ -324,15 +324,18 @@ function TableCellViewer({ item }: {item:any }) {
       }
     }
   
-
+    const handleOpenSide = () => {
+      setOpenSide(true)
+    }
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-secondary w-fit cursor-pointer">
+        <Button variant="link" className="text-secondary w-fit cursor-pointer" onClick={handleOpenSide}>
           {item.name}
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      {
+        openSide ? (<DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>Edit Category</DrawerTitle>
           <DrawerDescription>
@@ -367,7 +370,9 @@ function TableCellViewer({ item }: {item:any }) {
             <Button variant="outline" className="cursor-pointer">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
-      </DrawerContent>
+      </DrawerContent>): (<></>)
+      }
+
     </Drawer>
   )
 }
