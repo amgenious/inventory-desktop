@@ -287,6 +287,7 @@ function TableCellViewer({ item }: { item: any }) {
       )
     } finally {
       setIsUpdating(false)
+      setOpenSide(false)
     }
   }
     const handleOpenSide = () => {
