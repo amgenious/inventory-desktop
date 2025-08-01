@@ -257,6 +257,7 @@ React.useEffect(() => {
   )
 }
 function TableCellViewer({ item }: { item: any }) {
+  const [openSide, setOpenSide] = React.useState(false)  
   const isMobile = useIsMobile()
   const [newname, setNewname] = React.useState("")
   const [isUpdating, setIsUpdating] = React.useState(false)
@@ -279,6 +280,7 @@ function TableCellViewer({ item }: { item: any }) {
       toast.success(
         "Success! Location has been updated",
      )
+     setOpenSide(false)
     } catch (error) {
       toast.error(
          `Failed to update location, Error ${error}`,
@@ -287,15 +289,18 @@ function TableCellViewer({ item }: { item: any }) {
       setIsUpdating(false)
     }
   }
-
+    const handleOpenSide = () => {
+      setOpenSide(true)
+    }
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-secondary w-fit cursor-pointer">
+        <Button variant="link" className="text-secondary w-fit cursor-pointer" onClick={handleOpenSide}>
           {item.name}
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      {
+         openSide ? (      <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>Edit Location</DrawerTitle>
           <DrawerDescription></DrawerDescription>
@@ -323,7 +328,9 @@ function TableCellViewer({ item }: { item: any }) {
             <Button variant="outline" className="cursor-pointer">Cancel</Button>
           </DrawerClose>
         </DrawerFooter>
-      </DrawerContent>
+      </DrawerContent>): (<></>)
+      }
+
     </Drawer>
   )
 }
