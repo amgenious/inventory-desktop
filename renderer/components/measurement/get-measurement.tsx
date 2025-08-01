@@ -281,6 +281,7 @@ const Getmeasurement = () => {
   )
 }
 function TableCellViewer({ item }: {item:any }) {
+  const [openSide, setOpenSide] = React.useState(false)    
   const isMobile = useIsMobile()
   const [newmeasurement, setNewmeasurement] = React.useState("")
   const [isUpdating, setIsUpdating] = React.useState(false)
@@ -303,21 +304,28 @@ function TableCellViewer({ item }: {item:any }) {
         toast.success(
           "Success! measurement has been updated",
        )
+       setOpenSide(false)
       } catch (error) {
         toast.error(
            `Failed to update measurement, Error ${error}`,
         )
       } finally {
         setIsUpdating(false)
+        setOpenSide(false)
       }
     }
+    const handleOpenSide = () => {
+      setOpenSide(true)
+    }    
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
-        <Button variant="link" className="text-secondary w-fit cursor-pointer">
+        <Button variant="link" className="text-secondary w-fit cursor-pointer" onClick={handleOpenSide}>
           {item.name}
         </Button>
       </DrawerTrigger>
+      {
+        openSide ? (
       <DrawerContent>
         <DrawerHeader className="gap-1">
           <DrawerTitle>Edit Measurement</DrawerTitle>
@@ -348,6 +356,9 @@ function TableCellViewer({ item }: {item:any }) {
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
+        ): (<></>)
+      }
+
     </Drawer>
   )
 }
