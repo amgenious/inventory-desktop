@@ -166,7 +166,8 @@ const AddIssues = () => {
           body: JSON.stringify({
             name: item.itemname,
             prevQuantity: item.oldquantity,
-            addedQuantity: item.quantity,
+            Issue: item.quantity,
+            Receipt:0,
             newQuantity: newquantity,
           }),
         })

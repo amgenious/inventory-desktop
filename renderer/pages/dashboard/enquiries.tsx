@@ -435,8 +435,9 @@ return(
         <TableHeader className="bg-muted sticky top-0 z-10">
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead>Previous Quantity</TableHead>
-            <TableHead>Added/Subtracted Quantity</TableHead>
+            <TableHead>Prev. Quantity</TableHead>
+            <TableHead>Issue</TableHead>
+            <TableHead>Receipt</TableHead>
             <TableHead>New Quantity</TableHead>
             <TableHead>Date</TableHead>
           </TableRow>
@@ -447,7 +448,8 @@ return(
               <TableRow key={item.id}>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.prevQuantity}</TableCell>
-                <TableCell>{item.addedQuantity}</TableCell>
+                <TableCell>{item.Issue}</TableCell>
+                <TableCell>{item.Receipt}</TableCell>
                 <TableCell>{item.newQuantity}</TableCell>
                 <TableCell>{item.createdAt}</TableCell>
               </TableRow>

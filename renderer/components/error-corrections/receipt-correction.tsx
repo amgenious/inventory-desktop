@@ -27,6 +27,7 @@ const Receiptcorrection = () => {
   const [query, setQuery] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchedData, setSearchedData] = useState<any>([]);
+  const [searchedDataOriginal, setSearchedDataOriginal] = useState<any>([]);
   const [searched, setSearched] = useState([]);
   const [newinvoicenumber, setNewinvoicenumber] = useState("");
   const [newsupplier, setNewsupplier] = useState("");
@@ -46,7 +47,7 @@ const Receiptcorrection = () => {
     const response = await fetch("http://localhost:8000/api/v1/receipt/")
     const data = await response.json()
         const uniqueReceipt = Array.from(
-  new Map(data.receipt.map(item => [item.referencenumber, item])).values()
+  new Map(data.receipt.map((item: { referencenumber: any; }) => [item.referencenumber, item])).values()
 );
     setReceipt(uniqueReceipt)
     setFetching(false);
@@ -62,7 +63,14 @@ const Receiptcorrection = () => {
       }
       const data = await response.json();
       setSearched(data);
-      setSearchedData(data.searchedReceipt);
+      setSearchedDataOriginal(data.searchedReceipt);
+      const uniqueHead = Array.from(new Map(data.searchedReceipt.map((item:{referencenumber:any})=>[
+        item.referencenumber,
+        item
+      ])
+    ).values()
+  )
+      setSearchedData(uniqueHead);
     } catch (error) {
       toast(`Failed to search. ${error}`);
     } finally {
@@ -250,10 +258,14 @@ const Receiptcorrection = () => {
                     <TableHead className="text-black">Item Name</TableHead>
                     <TableHead className="text-black">Part Number</TableHead>
                     <TableHead className="text-black">Location</TableHead>
+                    <TableHead className="text-black">Quantity</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
+                  {
+                    searchedDataOriginal.length ? (
+                      searchedDataOriginal.map((item:any,index:React.Key)=>(
+                  <TableRow key={index}>
                     <TableCell className="text-muted">
                       {item.itemname}
                     </TableCell>
@@ -263,19 +275,23 @@ const Receiptcorrection = () => {
                     <TableCell className="text-muted">
                       {item.location}
                     </TableCell>
+                    <TableCell className="text-muted">
+                        <Input
+                          placeholder="quantity"
+                          type="number"
+                          value={item.quantity}
+                          className="w-3/4 border-none dark:bg-white dark:text-black"
+                          disabled
+                        />
+                    </TableCell>
                   </TableRow>
+                      ))
+                    ) : (
+                      <p>No Items Found</p>
+                    )
+                  }
                 </TableBody>
               </Table>
-              <div className="flex justify-center items-center gap-2 w-1/2">
-                <Label className="text-black">Quantity</Label>
-                <Input
-                  placeholder="quantity"
-                  type="number"
-                  value={item.quantity}
-                  className="w-3/4 border-none dark:bg-white dark:text-black"
-                  disabled
-                />
-              </div>
             </div>
             {
               user?.role === 'admin' &&  <Button

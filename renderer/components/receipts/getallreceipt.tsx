@@ -266,10 +266,10 @@ const Getallreceipt = () => {
         <Input
           placeholder="Filter Receipts..."
           value={
-            (table.getColumn("itemname")?.getFilterValue() as string) ?? ""
+            (table.getColumn("referencenumber")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("itemname")?.setFilterValue(event.target.value)
+            table.getColumn("referencenumber")?.setFilterValue(event.target.value)
           }
           className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black"
         />

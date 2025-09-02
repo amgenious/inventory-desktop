@@ -100,7 +100,7 @@ const Addreceipt = () => {
     }
         try {
       for (let item of receiptItems) {
-        const newquantity = item.oldquantity - item.quantity
+        const newquantity = item.oldquantity + item.quantity
 
         await fetch("http://localhost:8000/api/v1/receipt/add-receipt", {
           method: "POST",
@@ -133,7 +133,8 @@ const Addreceipt = () => {
           body: JSON.stringify({
             name: item.itemname,
             prevQuantity: item.oldquantity,
-            addedQuantity: item.quantity,
+            Issue: 0,
+            Receipt: item.quantity,
             newQuantity: newquantity,
           }),
         })

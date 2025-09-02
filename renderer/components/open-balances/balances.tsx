@@ -104,7 +104,8 @@ const BalancesPage = () => {
           body: JSON.stringify({
             name,
             prevQuantity,
-            addedQuantity,
+            Issue:0,
+            Receipt:0,
             newQuantity,
           }),
         }
@@ -168,7 +169,7 @@ const BalancesPage = () => {
                   onChange={handleItemChange}
                   className="col-span-3 border rounded px-2 py-1"
                 >
-                  <option value="" disabled>Select an item</option>
+                  {/* <option disabled>Select an item</option> */}
                   {fetchedItems.map((item: any) => (
                     <option key={item.id} value={item.id}>
                       {item.name}
