@@ -169,7 +169,7 @@ const OpenBalanceCorrectionPage = () => {
               user?.role === 'admin' &&             <Button
               className="cursor-pointer"
               disabled={isUpdating}
-              onClick={onUpdate}
+              // onClick={onUpdate}
             >
               {isUpdating ? (
                 <>

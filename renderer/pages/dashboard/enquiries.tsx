@@ -62,6 +62,7 @@ const EnquiriesReportPage = () => {
           const data = await response.json()
           toast.success("Done with the search")
           setFilteredData(data.searchedStock)
+          console.log(data.searchedStock)
       }catch(error){
           toast.error(`Failed to search. ${error}`)
       }finally{
@@ -302,7 +303,7 @@ function DetailsViewer({item}:{item:any}){
 return(
   <Dialog >
       <DialogTrigger asChild>
-        <p className="cursor-pointer text-muted">{item.name}</p>
+        <p className="cursor-pointer text-muted bg-primary-foreground text-center rounded-sm">{item.name}</p>
       </DialogTrigger>
       <DialogContent className="w-full max-w-[1050px] max-h-fit">
         <DialogHeader>

@@ -149,9 +149,9 @@ const Addreceipt = () => {
   }
   const fetchItems = async () => {
     setFetching(true);
-    const response = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance");
+    const response = await fetch("http://localhost:8000/api/v1/stock/stockwithbalance/");
     const data = await response.json();
-    setItems(data.openbalance);
+    setItems(data.stock);
 
     const response1 = await fetch("http://localhost:8000/api/v1/supplier/");
     const data1 = await response1.json();

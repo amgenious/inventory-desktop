@@ -59,9 +59,9 @@ const AddIssues = () => {
   } 
   const fetchItems = async () => {
     setFetching(true)
-    const itemsRes = await fetch("http://localhost:8000/api/v1/stock/getAllOpenBalance/")
+    const itemsRes = await fetch("http://localhost:8000/api/v1/stock/stockwithbalance/")
     const itemsData = await itemsRes.json()
-    setFetchedItems(itemsData.openbalance)
+    setFetchedItems(itemsData.stock)
 
     const customerRes = await fetch("http://localhost:8000/api/v1/customer/")
     const customerData = await customerRes.json()
