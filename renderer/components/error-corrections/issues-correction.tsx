@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useAuth } from "@/hooks/use-auth"
+import { PartNumberSelector } from "../../components/shared/new-combobox";
 
 const Issuescorrection = () => {
   const { user } = useAuth()
@@ -144,20 +145,11 @@ const Issuescorrection = () => {
           {
             fetching ? (<Loader className="h-4 w-full animate-spin text-center"/>):
             (
-          <Select onValueChange={setQuery}>
-            <SelectTrigger className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black">
-              <SelectValue placeholder="Select Issue Referencenumber"/>
-            </SelectTrigger>
-            <SelectContent className="max-w-sm border-none dark:bg-white dark:text-black">
-              {
-                issue.map((item:any,index:number) => (
-              <SelectItem value={item.referencenumber} key={index}>
-                {item.referencenumber}
-              </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
+              <PartNumberSelector 
+                  title={"Filter Issue Reference Numbers"} 
+                  fetchedItems={issue}
+                  handleSeletedItem={setQuery}                 
+                  />
             )
           }
             <Button
