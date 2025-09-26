@@ -12,6 +12,7 @@ import { useState } from "react"
 
 export function PartNumberSelector({ title, fetchedItems,handleSeletedItem }) {
 const [selectedItem, setSelectedItem] = useState("")
+console.log(fetchedItems)
 const handle = (referencenumber) => {
     setSelectedItem(referencenumber)
     return handleSeletedItem(referencenumber)
@@ -25,15 +26,15 @@ const handle = (referencenumber) => {
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0">
         <Command>
-          <CommandInput placeholder="Filter Reference Number" />
+          <CommandInput placeholder="Filter" />
           <CommandList>
             <CommandGroup>
               {fetchedItems.map((itm:any,index:number) => (
                 <CommandItem
                   key={index}
-                  onSelect={() => handle(itm.referencenumber)}
+                  onSelect={() => handle(itm.referencenumber || itm.partnumber )}
                 >
-                  {itm.referencenumber}
+                  {itm.referencenumber || itm.partnumber}
                 </CommandItem>
               ))}
             </CommandGroup>

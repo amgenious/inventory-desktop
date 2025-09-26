@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useAuth } from "@/hooks/use-auth"
+import { PartNumberSelector } from "../shared/new-combobox";
 
 const OpenBalanceCorrectionPage = () => {
     const { user } = useAuth()
@@ -37,7 +38,7 @@ const OpenBalanceCorrectionPage = () => {
       async function onSubmit() {
         setIsSubmitting(true);
         try {
-          const response = await fetch(`http://localhost:8000/api/v1/stock/search?name=${query}`);
+          const response = await fetch(`http://localhost:8000/api/v1/stock/search?partnumber=${query}`);
           if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || "Failed to search the item");
@@ -90,21 +91,12 @@ const OpenBalanceCorrectionPage = () => {
           {
             fetching ? (<Loader className="h-4 w-full animate-spin text-center"/>):
             (
-          <Select onValueChange={setQuery}>
-            <SelectTrigger className="max-w-sm border-none placeholder:text-black dark:bg-white dark:text-black">
-              <SelectValue placeholder="Select Stock Name"/>
-            </SelectTrigger>
-            <SelectContent className="max-w-sm border-none dark:bg-white dark:text-black">
-              {
-                fetchedOpenbalance.map((item:any,index:number) => (
-              <SelectItem value={item.name} key={index}>
-                {item.name}
-              </SelectItem>
-                ))
-              }
-            </SelectContent>
-          </Select>
-            )
+              <PartNumberSelector 
+              title={"Filter Part Number"}
+              fetchedItems={fetchedOpenbalance}
+              handleSeletedItem={setQuery}
+              />
+                )
           }
             <Button
               className="cursor-pointer"
