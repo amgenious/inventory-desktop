@@ -40,7 +40,7 @@ const BalancesPage = () => {
 
   const fetchItems = async () => {
     setFetching(true);
-    const response = await fetch("http://localhost:8000/api/v1/stock/");
+    const response = await fetch("http://localhost:8000/api/v1/stock/stockwithoutbalance");
     const data = await response.json();
     setItems(data.stock);
     setFetching(false);
@@ -159,7 +159,7 @@ const BalancesPage = () => {
           {fetching ? (
             <LoaderCircle className="h-5 w-full text-center animate-spin" />
           ) : (
-            <>
+            <div className="flex gap-5">
               <div className="flex gap-4 flex-1/3">
                 <Label htmlFor="item" className="text-right text-secondary">
                   Item Name
@@ -177,8 +177,24 @@ const BalancesPage = () => {
                   ))}
                 </select>
               </div>
-             
-            </>
+              <div className="flex gap-4 flex-1/3">
+                <Label htmlFor="item" className="text-right text-secondary">
+                  Part Number
+                </Label>
+                <select
+                  id="item"
+                  onChange={handleItemChange}
+                  className="col-span-3 border rounded px-2 py-1"
+                >
+                  {/* <option disabled>Select an item</option> */}
+                  {fetchedItems.map((item: any) => (
+                    <option key={item.id} value={item.id}>
+                      {item.partnumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           )}
         </div>
       </div>
