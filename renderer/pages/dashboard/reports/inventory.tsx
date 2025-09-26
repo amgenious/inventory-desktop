@@ -59,6 +59,7 @@ const InventoryPage = () => {
           const data = await response.json()
           toast.success("Done with the search")
           setFilteredData(data.searchedStock)
+          console.log("info", data.searchedStock)
       }catch(error){
           toast.error(`Failed to search. ${error}`)
       }finally{
@@ -176,6 +177,7 @@ const InventoryPage = () => {
               <TableHead>Name</TableHead>
               <TableHead>Location</TableHead>
               <TableHead>Part Number</TableHead>
+              <TableHead>Category</TableHead>
               <TableHead>Quantity</TableHead>
             </TableRow>
           </TableHeader>
@@ -187,6 +189,7 @@ const InventoryPage = () => {
                   <TableCell className='text-muted'>{item.name}</TableCell>
                   <TableCell className='text-muted'>{item.location}</TableCell>
                   <TableCell className='text-muted'>{item.partnumber}</TableCell>
+                  <TableCell className='text-muted'>{item.category}</TableCell>
                   <TableCell className='text-muted'>{item.quantity}</TableCell>
                 </TableRow>
               ))
