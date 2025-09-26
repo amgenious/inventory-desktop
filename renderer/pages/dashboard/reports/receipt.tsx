@@ -166,7 +166,7 @@ const ReceiptReport = () => {
             onChange={(e) => setReferencenumber(e.target.value)} />
         <Input placeholder="Part Number" className="w-fit border-none dark:bg-white dark:text-black" 
             onChange={(e) => setPartnumber(e.target.value)} />
-        <Input placeholder="Invoice Number" type="number" className="w-fit border-none dark:bg-white dark:text-black" 
+        <Input placeholder="Invoice Number" type="text" className="w-fit border-none dark:bg-white dark:text-black" 
             onChange={(e) => setInvoicenumber(e.target.value)} />
         {
           fetching ? (
