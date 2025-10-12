@@ -256,8 +256,7 @@ const EnquiriesReportPage = () => {
   )
 }
 function DetailsViewer({item}:{item:any}){
-  const [searchedIssuename,setSearchedIssueName] = useState<any>([])
-  const [searchedReceiptname,setSearchedReceiptName] = useState<any>([])
+  const [searchedItemquantity,setSearchedItemQuantity] = useState<any>(0)
   const [searchedStockhistory,setSearchedStockhistory] = useState<any>([])
   const [detailsSearch, setDetailsSearch] = useState(true)
   const fetchNewParams = async () => {
@@ -267,29 +266,22 @@ function DetailsViewer({item}:{item:any}){
     if (itemname) params.append("itemname", itemname);
     const queryString = params.toString();
 
-    const response = await fetch(`http://localhost:8000/api/v1/issue/search/report?${queryString}`)
-    const data = await response.json()
-    console.log("Searhed Issue", data.searchedIssue)
-    setSearchedIssueName(data.searchedIssue)
-
     if (itemname) params.append("name", itemname);
     const queryString1 = params.toString();
     const response2 = await fetch(`http://localhost:8000/api/v1/stock/allstockhistory/search?${queryString1}`)
     const data2 = await response2.json()
-      console.log("Searhed Stock history", data2.searchedStockHistory)
     setSearchedStockhistory(data2.searchedStockHistory)
     
     setDetailsSearch(false)
   }
   const fetchReceipt = async(itemname:string)=>{
     const params = new URLSearchParams();
-    if (itemname) params.append("itemname", itemname);
+    if (itemname) params.append("name", itemname);
     const queryString = params.toString();
 
-    const response1 = await fetch(`http://localhost:8000/api/v1/receipt/search/report?${queryString}`)
+    const response1 = await fetch(`http://localhost:8000/api/v1/stock/search?${queryString}`)
     const data1 = await response1.json()
-      console.log("Searhed Receipt", data1.searchedReceipt)
-    setSearchedReceiptName(data1.searchedReceipt)
+    setSearchedItemQuantity(data1.searchedStock[0].quantity)
   }
   const formatDate = (timestamp: string): string => {
     const date = new Date(timestamp);
@@ -347,96 +339,16 @@ return(
             <Loader2 className="w-full h-4 animate-spin"/>
           ):(
         <>
-        <div className="w-full p-4 border rounded-lg">
-          <p className="font-semibold py-2">Transactions Made</p>
-          <div className="w-full py-2">
-            <p className="py-1">Issues Made</p>
-            <div>
-            <Table>
-        <TableHeader className="bg-muted sticky top-0 z-10">
-          <TableRow>
-            <TableHead>Reference Number</TableHead>
-            <TableHead>Value Date</TableHead>
-            <TableHead>Trans Code</TableHead>
-            <TableHead>Trans Type</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Remarks</TableHead>
-            <TableHead>Quantity</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {searchedIssuename.length ? (
-            searchedIssuename.map((item:any) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.referencenumber}</TableCell>
-                <TableCell>{item.valuedate}</TableCell>
-                <TableCell>{item.transcode}</TableCell>
-                <TableCell>{item.transtype}</TableCell>
-                <TableCell>{item.customer}</TableCell>
-                <TableCell>{item.remarks}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow className="text-center p-5">
-                <TableCell>No issues found.</TableCell>
-              </TableRow>
-          )}
-          </TableBody>
-        </Table>
-            </div>
-          </div>
-          <div className="w-full py-2">
-            <p className="py-1">Receipts Made</p>
-            <div>
-            <Table>
-        <TableHeader className="bg-muted sticky top-0 z-10">
-          <TableRow>
-            <TableHead>Reference Number</TableHead>
-            <TableHead>Value Date</TableHead>
-            <TableHead>Invoice Number</TableHead>
-            <TableHead>Invoice Date</TableHead>
-            <TableHead>Trans Code</TableHead>
-            <TableHead>Trans Type</TableHead>
-            <TableHead>Supplier</TableHead>
-            <TableHead>Remarks</TableHead>
-            <TableHead>Quantity</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {searchedReceiptname.length ? (
-            searchedReceiptname.map((item:any) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.referencenumber}</TableCell>
-                <TableCell>{item.valuedate}</TableCell>
-                <TableCell>{item.invoicenumber}</TableCell>
-                <TableCell>{item.invoicedate}</TableCell>
-                <TableCell>{item.transcode}</TableCell>
-                <TableCell>{item.transtype}</TableCell>
-                <TableCell>{item.supplier}</TableCell>
-                <TableCell>{item.remarks}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow className="text-center p-5">
-                <TableCell>No receipt found.</TableCell>
-              </TableRow>
-          )}
-          </TableBody>
-        </Table>
-            </div>
-          </div>
+        <div>
+          <p>Initial Open Balance: {searchedItemquantity}</p>
         </div>
-
         <div className="w-full py-2">
            <p className="py-1">Stock History</p>
            <div>
              <Table>
         <TableHeader className="bg-muted sticky top-0 z-10">
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Prev. Quantity</TableHead>
+            <TableHead>Reference Number</TableHead>
             <TableHead>Issue</TableHead>
             <TableHead>Receipt</TableHead>
             <TableHead>New Quantity</TableHead>
@@ -447,8 +359,7 @@ return(
           {searchedStockhistory.length ? (
             searchedStockhistory.map((item:any) => (
               <TableRow key={item.id}>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.prevQuantity}</TableCell>
+                <TableCell>{item.referencenumber}</TableCell>
                 <TableCell>{item.Issue}</TableCell>
                 <TableCell>{item.Receipt}</TableCell>
                 <TableCell>{item.newQuantity}</TableCell>

@@ -131,6 +131,7 @@ const Addreceipt = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            referencenumber,
             name: item.itemname,
             prevQuantity: item.oldquantity,
             Issue: 0,
